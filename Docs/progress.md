@@ -474,3 +474,11 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   covering: valid/wrong-secret/tamper/empty/buffer/raw-body-trap for HMAC; currency/amount-cap/
   float-reject/budget/reason-length/remaining/stop-rule/rate/compose for policy. Gate: `tsc` (0),
   `lint` (0), `npm test` (**463 passing**, 48 files), `npm run build` (success). Committed and pushed.
+- **2026-09-02** — Phase 3: Human checkout. Landing `checkout` section type (sku, ctaLabel,
+  showUpsells) in `types.ts` discriminated union. `CheckoutButton` client component (Razorpay CDN
+  Checkout.js, server-priced, demo mode). Three API routes: `POST /api/checkout/orders` (server-priced
+  AarogyaFit SKUs, demo fallback), `POST /api/checkout/verify` (HMAC checkout handler signature),
+  `POST /api/webhooks/razorpay` (raw-body HMAC, idempotency set, replay guard, 200 fast — TODO: full
+  audit writes in Phase 6). Section renderer handles `checkout` with editor placeholder. Gate: `tsc`
+  (0), `lint` (0), `npm test` (**463 passing**, 48 files), `npm run build` (success, 3 new routes
+  visible). Committed and pushed.
