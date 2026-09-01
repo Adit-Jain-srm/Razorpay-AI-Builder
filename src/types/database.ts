@@ -559,6 +559,13 @@ export interface Database {
       performance_metrics: { Row: PerformanceMetricRow; Insert: PerformanceMetricInsert; Update: PerformanceMetricUpdate; Relationships: [] };
       anomalies: { Row: AnomalyRow; Insert: AnomalyInsert; Update: AnomalyUpdate; Relationships: [] };
       ai_insights: { Row: AiInsightRow; Insert: AiInsightInsert; Update: AiInsightUpdate; Relationships: [] };
+      products: { Row: ProductRow; Insert: ProductInsert; Update: ProductUpdate; Relationships: [] };
+      mandates: { Row: MandateRow; Insert: MandateInsert; Update: MandateUpdate; Relationships: [] };
+      orders: { Row: OrderRow; Insert: OrderInsert; Update: OrderUpdate; Relationships: [] };
+      order_items: { Row: OrderItemRow; Insert: OrderItemInsert; Update: OrderItemUpdate; Relationships: [] };
+      payments: { Row: PaymentRow; Insert: PaymentInsert; Update: PaymentUpdate; Relationships: [] };
+      audit_events: { Row: AuditEventRow; Insert: AuditEventInsert; Update: AuditEventUpdate; Relationships: [] };
+      webhook_receipts: { Row: WebhookReceiptRow; Insert: WebhookReceiptInsert; Update: WebhookReceiptUpdate; Relationships: [] };
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
@@ -593,3 +600,234 @@ export type AiInsight = AiInsightRow;
 
 /** Helper: table names available on the public schema. */
 export type TableName = keyof Database["public"]["Tables"];
+
+/* -------------------------------------------------------------------------- */
+/* Wave 7: Razorpay money-loop types (Track 01)                               */
+/* -------------------------------------------------------------------------- */
+
+export type ProductRow = {
+  id: string;
+  user_id: string;
+  sku: string;
+  title: string;
+  description: string;
+  amount_paise: number;
+  currency: string;
+  image_url: string | null;
+  landing_path: string | null;
+  availability: string;
+  upsell_skus: Json;
+  cross_sell_skus: Json;
+  is_eligible_checkout: boolean;
+  sort_order: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+export type ProductInsert = {
+  id?: string;
+  user_id: string;
+  sku: string;
+  title: string;
+  description?: string;
+  amount_paise: number;
+  currency?: string;
+  image_url?: string | null;
+  landing_path?: string | null;
+  availability?: string;
+  upsell_skus?: Json;
+  cross_sell_skus?: Json;
+  is_eligible_checkout?: boolean;
+  sort_order?: number;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+export type ProductUpdate = Partial<ProductRow>;
+
+export type MandateRow = {
+  id: string;
+  user_id: string;
+  campaign_id: string | null;
+  action: string;
+  amount_paise: number;
+  max_paise: number;
+  currency: string;
+  expires_at: string;
+  reason: string;
+  evidence: Json;
+  actor: string;
+  decided_by: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+export type MandateInsert = {
+  id?: string;
+  user_id: string;
+  campaign_id?: string | null;
+  action: string;
+  amount_paise: number;
+  max_paise: number;
+  currency?: string;
+  expires_at: string;
+  reason: string;
+  evidence?: Json;
+  actor?: string;
+  decided_by?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+export type MandateUpdate = Partial<MandateRow>;
+
+export type OrderRow = {
+  id: string;
+  user_id: string;
+  campaign_id: string | null;
+  landing_page_id: string | null;
+  product_id: string | null;
+  razorpay_order_id: string | null;
+  receipt: string | null;
+  amount_paise: number;
+  currency: string;
+  status: string;
+  mandate_id: string | null;
+  utm: Json;
+  notes: Json;
+  idempotency_key: string | null;
+  created_at: string;
+  updated_at: string;
+};
+export type OrderInsert = {
+  id?: string;
+  user_id: string;
+  campaign_id?: string | null;
+  landing_page_id?: string | null;
+  product_id?: string | null;
+  razorpay_order_id?: string | null;
+  receipt?: string | null;
+  amount_paise: number;
+  currency?: string;
+  status?: string;
+  mandate_id?: string | null;
+  utm?: Json;
+  notes?: Json;
+  idempotency_key?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+export type OrderUpdate = Partial<OrderRow>;
+
+export type OrderItemRow = {
+  id: string;
+  order_id: string;
+  user_id: string;
+  sku: string;
+  quantity: number;
+  amount_paise: number;
+  role: string;
+  created_at: string;
+};
+export type OrderItemInsert = {
+  id?: string;
+  order_id: string;
+  user_id: string;
+  sku: string;
+  quantity?: number;
+  amount_paise: number;
+  role?: string;
+  created_at?: string;
+};
+export type OrderItemUpdate = Partial<OrderItemRow>;
+
+export type PaymentRow = {
+  id: string;
+  order_id: string;
+  user_id: string;
+  razorpay_payment_id: string | null;
+  status: string;
+  method: string | null;
+  error_code: string | null;
+  error_description: string | null;
+  payload: Json;
+  created_at: string;
+  updated_at: string;
+};
+export type PaymentInsert = {
+  id?: string;
+  order_id: string;
+  user_id: string;
+  razorpay_payment_id?: string | null;
+  status?: string;
+  method?: string | null;
+  error_code?: string | null;
+  error_description?: string | null;
+  payload?: Json;
+  created_at?: string;
+  updated_at?: string;
+};
+export type PaymentUpdate = Partial<PaymentRow>;
+
+export type AuditEventRow = {
+  id: string;
+  user_id: string;
+  actor: string;
+  action: string;
+  campaign_id: string | null;
+  order_id: string | null;
+  mandate_id: string | null;
+  reason: string;
+  before_state: Json;
+  after_state: Json;
+  ok: boolean;
+  error_code: string | null;
+  created_at: string;
+};
+export type AuditEventInsert = {
+  id?: string;
+  user_id: string;
+  actor: string;
+  action: string;
+  campaign_id?: string | null;
+  order_id?: string | null;
+  mandate_id?: string | null;
+  reason?: string;
+  before_state?: Json;
+  after_state?: Json;
+  ok?: boolean;
+  error_code?: string | null;
+  created_at?: string;
+};
+export type AuditEventUpdate = Partial<AuditEventRow>;
+
+export type WebhookReceiptRow = {
+  id: string;
+  user_id: string;
+  event_id: string;
+  event_name: string;
+  signature_ok: boolean;
+  raw_hash: string | null;
+  processed_at: string | null;
+  created_at: string;
+};
+export type WebhookReceiptInsert = {
+  id?: string;
+  user_id: string;
+  event_id: string;
+  event_name: string;
+  signature_ok?: boolean;
+  raw_hash?: string | null;
+  processed_at?: string | null;
+  created_at?: string;
+};
+export type WebhookReceiptUpdate = Partial<WebhookReceiptRow>;
+
+/* Convenience aliases */
+export type Product = ProductRow;
+export type Mandate = MandateRow;
+export type Order = OrderRow;
+export type OrderItem = OrderItemRow;
+export type Payment = PaymentRow;
+export type AuditEvent = AuditEventRow;
+export type WebhookReceipt = WebhookReceiptRow;

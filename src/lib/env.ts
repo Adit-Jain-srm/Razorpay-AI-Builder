@@ -45,6 +45,12 @@ const envSchema = z.object({
   // Scraping Browser (Puppeteer/Playwright) WSS endpoint. Optional - when set it
   // enables interactive / JS-heavy scraping via a remote Bright Data browser.
   BRIGHTDATA_BROWSER_WS: z.string().optional(),
+
+  // Razorpay (Test Mode) - Standard Checkout + webhooks.
+  // Key ID is public (mounted on Checkout.js); secret + webhook secret are server-only.
+  NEXT_PUBLIC_RAZORPAY_KEY_ID: z.string().default(""),
+  RAZORPAY_KEY_SECRET: z.string().default(""),
+  RAZORPAY_WEBHOOK_SECRET: z.string().default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -77,6 +83,9 @@ export function getEnv(): Env {
     BRIGHTDATA_WEB_UNLOCKER_ZONE: process.env.BRIGHTDATA_WEB_UNLOCKER_ZONE,
     BRIGHTDATA_SERP_ZONE: process.env.BRIGHTDATA_SERP_ZONE,
     BRIGHTDATA_BROWSER_WS: process.env.BRIGHTDATA_BROWSER_WS,
+    NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
   });
 
   cached = parsed.success ? parsed.data : envSchema.parse({});
@@ -127,12 +136,25 @@ export function isBrightDataConfigured(): boolean {
   return !isMissing(getEnv().BRIGHTDATA_API_TOKEN);
 }
 
+/** Razorpay Test Mode is configured when both key ID and secret are set. */
+export function isRazorpayConfigured(): boolean {
+  const e = getEnv();
+  return !isMissing(e.NEXT_PUBLIC_RAZORPAY_KEY_ID) && !isMissing(e.RAZORPAY_KEY_SECRET);
+}
+
+/** Razorpay webhook verification requires its own secret (different from key secret). */
+export function isRazorpayWebhookConfigured(): boolean {
+  return isRazorpayConfigured() && !isMissing(getEnv().RAZORPAY_WEBHOOK_SECRET);
+}
+
 /** Snapshot of which integrations are wired up - handy for "setup" UI states. */
 export interface ServiceConfigStatus {
   supabase: boolean;
   supabaseAdmin: boolean;
   azure: boolean;
   brightData: boolean;
+  razorpay: boolean;
+  razorpayWebhook: boolean;
 }
 
 export function getServiceConfigStatus(): ServiceConfigStatus {
@@ -141,5 +163,7 @@ export function getServiceConfigStatus(): ServiceConfigStatus {
     supabaseAdmin: isSupabaseAdminConfigured(),
     azure: isAzureConfigured(),
     brightData: isBrightDataConfigured(),
+    razorpay: isRazorpayConfigured(),
+    razorpayWebhook: isRazorpayWebhookConfigured(),
   };
 }

@@ -4,10 +4,10 @@ overview: Upgrade shipped MediaOS into a full Track 01 growth + agentic-commerce
 todos:
   - id: docs-pack
     content: "Phase 0: Docs/buildathon/* + ADR 0005 + Wave 7 tracker; gate; conventional commit; git push origin"
-    status: in_progress
+    status: completed
   - id: schema-env
     content: "Phase 1: Migration 0003 + env + AppError razorpay + database.ts; schema tests; docs; commit; push"
-    status: pending
+    status: in_progress
   - id: payments-core
     content: "Phase 2: Razorpay client + policy + HMAC + demo store; edge-case unit tests; Docs/payments.md; commit; push"
     status: pending

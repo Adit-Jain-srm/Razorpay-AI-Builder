@@ -11,6 +11,7 @@ export type ServiceName =
   | "supabase"
   | "agent"
   | "research"
+  | "razorpay"
   | "platform";
 
 export type AppErrorCode =
@@ -21,6 +22,9 @@ export type AppErrorCode =
   | "VALIDATION"
   | "NOT_IMPLEMENTED"
   | "UNAUTHORIZED"
+  | "POLICY_DENIED"
+  | "SIGNATURE_INVALID"
+  | "PAYMENT_FAILED"
   | "UNKNOWN";
 
 export interface AppErrorOptions {

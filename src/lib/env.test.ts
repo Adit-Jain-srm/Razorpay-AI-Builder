@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * The env loader must never throw on missing/placeholder credentials so the app
@@ -43,6 +43,8 @@ describe("env loader", () => {
       supabaseAdmin: false,
       azure: false,
       brightData: false,
+      razorpay: false,
+      razorpayWebhook: false,
     });
   });
 
@@ -112,5 +114,65 @@ describe("isAzureConfigured (Foundry v1 surface)", () => {
 
     const env = await import("./env");
     expect(env.isAzureConfigured()).toBe(false);
+  });
+});
+
+/* -------------------------------------------------------------------------- */
+/* Razorpay                                                                   */
+/* -------------------------------------------------------------------------- */
+
+describe("Razorpay configuration", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("is configured when both key ID and secret are set", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "rzp_test_abc123");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "real-rzp-secret");
+
+    const env = await import("./env");
+    expect(env.isRazorpayConfigured()).toBe(true);
+  });
+
+  it("is NOT configured when key ID is missing", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "real-rzp-secret");
+
+    const env = await import("./env");
+    expect(env.isRazorpayConfigured()).toBe(false);
+  });
+
+  it("is NOT configured when secret is missing", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "rzp_test_abc123");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "");
+
+    const env = await import("./env");
+    expect(env.isRazorpayConfigured()).toBe(false);
+  });
+
+  it("treats placeholder values as not configured", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "your-razorpay-key");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "your-razorpay-secret");
+
+    const env = await import("./env");
+    expect(env.isRazorpayConfigured()).toBe(false);
+  });
+
+  it("webhook is configured only when all three keys are set", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "rzp_test_abc123");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "real-rzp-secret");
+    vi.stubEnv("RAZORPAY_WEBHOOK_SECRET", "webhook-secret-32-chars-long-xxx");
+
+    const env = await import("./env");
+    expect(env.isRazorpayWebhookConfigured()).toBe(true);
+  });
+
+  it("webhook is NOT configured without the webhook secret", async () => {
+    vi.stubEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", "rzp_test_abc123");
+    vi.stubEnv("RAZORPAY_KEY_SECRET", "real-rzp-secret");
+    vi.stubEnv("RAZORPAY_WEBHOOK_SECRET", "");
+
+    const env = await import("./env");
+    expect(env.isRazorpayWebhookConfigured()).toBe(false);
   });
 });
