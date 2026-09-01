@@ -482,3 +482,19 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   audit writes in Phase 6). Section renderer handles `checkout` with editor placeholder. Gate: `tsc`
   (0), `lint` (0), `npm test` (**463 passing**, 48 files), `npm run build` (success, 3 new routes
   visible). Committed and pushed.
+- **2026-09-02** — Phase 4: Agentic commerce. `GET /api/commerce/catalog` (ACP-inspired JSON feed
+  with spec, merchant, items, INR paise, upsell graph, checkout endpoints). `POST /api/commerce/
+  checkout/sessions` (create session → razorpay_order_id). `public/llms.txt` for agent discovery.
+  9 catalog schema tests. Gate: `tsc` (0), `lint` (0), `npm test` (**472 passing**, 49 files),
+  `npm run build` (success). Committed and pushed.
+- **2026-09-02** — Phase 5: Growth scorecard + reallocation. `audienceAllocationSchema` in `brief.ts`
+  (personaId, percent, rationale, observedCtr/Cvr/CpaPaise/gmvPaise). `growth.ts`:
+  `buildGrowthScorecard` (per-audience CPA ranking), `computeReallocation` (pure worst→best shift),
+  `applyReallocation` (immutable). Templates updated with empty `audienceAllocations`. 13 new tests.
+  Gate: `tsc` (0), `lint` (0), `npm test` (**485 passing**, 50 files), `npm run build` (success).
+  Committed and pushed.
+- **2026-09-02** — Phase 6: Audit + extended funnel. `audit.ts`: in-memory append-only ledger
+  (`writeAudit`, `getAuditTimeline`, `countAuditEvents`), action labels, failure classification.
+  `aggregate.ts`: `extendedFunnel` with Checkout Started + Paid stages (falls back to modeled when
+  no Razorpay data); `ExtendedFunnelStage` type. 8 audit + 6 funnel tests. Gate: `tsc` (0),
+  `lint` (0), `npm test` (**499 passing**, 52 files), `npm run build` (success). Committed and pushed.
