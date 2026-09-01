@@ -1,17 +1,22 @@
 # MediaOS Architecture
 
-MediaOS is an **AI-native media buying platform**. The headline product is **the Operator** - an
-autonomous agent that plans, executes, monitors, and improves marketing campaigns end to end. Its
-moat is the **Audience Research Intelligence Engine**, an OpenBB-inspired "connect once, consume
+MediaOS is an **autonomous AI growth agent for Indian merchants**. The headline product is **the
+Operator** — an agent that researches buyers, orchestrates bounded ₹ campaigns, makes the merchant
+transactable by humans and AI buyers on Razorpay test-mode APIs, upsells within policy, and
+optimizes toward a measurable ₹ objective — with an audit trail on every money action.
+
+Its moat is the **Audience Research Intelligence Engine**, an OpenBB-inspired "connect once, consume
 everywhere" system that turns live web data (via Bright Data) into personas, pain points, and
 competitive intelligence that power every downstream module.
 
 The agent is the **primary surface**. Traditional CRM screens (campaign tables, creative galleries,
-analytics dashboards) are **secondary control surfaces** - the cockpit you drop into for manual
+analytics dashboards) are **secondary control surfaces** — the cockpit you drop into for manual
 control while the agent does the heavy lifting.
 
 This document is the map. For the rationale behind individual choices see the
 [ADRs](./adr/). For the research extensibility story see [research-engine.md](./research-engine.md).
+For the Razorpay money loop see [payments.md](./payments.md) and
+[ADR 0005](./adr/0005-razorpay-money-loop.md).
 
 ---
 
@@ -49,6 +54,8 @@ flowchart TB
         CreativeSvc[Creative Service]
         LandingSvc[Landing Page Service]
         AnalyticsSvc[Analytics Service]
+        PaymentsSvc["Payments + Commerce (Wave 7)"]
+        AuditSvc["Audit Ledger"]
     end
 
     subgraph providers [Research Providers - OpenBB-style TET]
@@ -61,9 +68,10 @@ flowchart TB
     end
 
     subgraph external [External Systems]
-        Azure["Azure OpenAI (GPT-4o + GPT-Image-2)"]
+        Azure["Azure AI Foundry (gpt-5.3-chat + MAI-Image-2.5)"]
         BrightData["Bright Data MCP"]
         Supabase["Supabase (Postgres/Auth/Storage/Realtime)"]
+        Razorpay["Razorpay Test Mode (Orders + Checkout + Webhooks)"]
     end
 
     Operator --> runtime
@@ -74,6 +82,8 @@ flowchart TB
     providers --> BrightData
     capabilities --> Azure
     capabilities --> Supabase
+    PaymentsSvc --> Razorpay
+    PaymentsSvc --> AuditSvc
     Executor --> Operator
 ```
 
@@ -124,16 +134,18 @@ flowchart LR
     Personas --> Brief[Campaign brief auto-filled]
     Brief --> Creatives[Creative Studio: copy + visuals + hooks]
     Personas --> Creatives
-    Creatives --> Landing[Landing page generated + deployed]
-    Landing --> Live["Live /lp/slug + lead capture"]
-    Live --> Analytics[Performance Intelligence]
-    Analytics --> Improve[Operator: anomalies + recommendations]
+    Creatives --> Landing[Landing page + Razorpay Checkout]
+    Landing --> Catalog[Agent-readable catalog]
+    Landing --> Payment["Razorpay test-mode payment"]
+    Payment --> Audit[Audit trail]
+    Payment --> Analytics[Performance Intelligence + GMV]
+    Analytics --> Improve[Operator: scorecard + reallocation]
     Improve --> Creatives
 ```
 
-**The flywheel.** Research informs creatives and pages; analytics informs the agent; the agent
-refines research and regenerates the weakest assets. Every loop makes the next campaign smarter -
-the same compounding effect OpenBB gets from adding financial data providers.
+**The flywheel.** Research informs creatives and pages; Razorpay payments provide real GMV data;
+the growth scorecard informs the agent; the agent reallocates budget and regenerates the weakest
+assets. Every loop makes the next campaign smarter.
 
 ---
 
@@ -147,22 +159,28 @@ src/
       page.tsx                      -- command center
       operator/ research/ campaigns/ creatives/ landing-pages/ analytics/
     lp/[slug]/                      -- public deployed landing pages
+    api/checkout/                   -- orders, verify (Razorpay Standard Checkout)
+    api/webhooks/razorpay/          -- payment.captured/failed, order.paid
+    api/commerce/                   -- catalog feed, checkout sessions
   lib/
-    agent/        -- typed tool registry, tool authoring (defineTool), prompts, run/plan types
+    agent/        -- typed tool registry (22 tools), tool authoring (defineTool), prompts, run/plan types
     research/     -- OpenBB-inspired engine: standard-models, provider (TET), registry,
                      orchestrator, brightdata adapter, analyzer
-    services/     -- campaign / creative / landing / analytics service contracts
+    payments/     -- Razorpay client, policy engine, HMAC, audit, growth scorecard, products
+    services/     -- campaign / creative / landing / analytics / payments service contracts
+    campaign/     -- brief schema (incl. audienceAllocations), templates, assistant
     validators/   -- Zod schemas for forms, API, and AI/tool output parsing
     ai/           -- Azure OpenAI client (chat + image), resilient
     supabase/     -- browser, server (RSC), and middleware clients
     env.ts        -- lazy, non-crashing env loader + is*Configured() predicates
-    errors.ts     -- typed AppError hierarchy (code + retriable)
+    errors.ts     -- typed AppError hierarchy (code + retriable) incl. POLICY_DENIED, PAYMENT_FAILED
     resilience.ts -- withTimeout, withRetry (backoff + jitter), CircuitBreaker
     logger.ts     -- structured logging
   proxy.ts        -- Next.js route protection (the "middleware" convention in Next 16)
 supabase/migrations/
   0001_init.sql   -- 19 tables + indexes + RLS policies
   0002_storage.sql-- storage buckets + path-scoped object policies
+  0003_razorpay_money_loop.sql -- 7 tables: products, orders, order_items, payments, mandates, audit_events, webhook_receipts
 ```
 
 ### Layering rules
@@ -179,22 +197,24 @@ supabase/migrations/
 
 ---
 
-## 5. Data Model (19 tables)
+## 5. Data Model (26 tables)
 
 All tables carry `id uuid pk`, a denormalized `user_id` (RLS scoped to `auth.uid()`), timestamps,
-and indexes on every FK + analytics date column. Full DDL: `supabase/migrations/0001_init.sql`.
+and indexes on every FK + analytics date column.
 
-| Domain | Tables |
-|---|---|
-| Agent | `agent_conversations`, `agent_messages`, `agent_runs` |
-| Research (USP) | `research_projects`, `audience_personas`, `competitor_ads`, `trend_signals`, `community_insights`, `research_sources` |
-| Campaigns + Creative | `campaigns`, `creatives`, `creative_images`, `brand_voices` |
-| Landing pages | `landing_pages`, `page_views`, `leads` |
-| Analytics | `performance_metrics`, `anomalies`, `ai_insights` |
+| Domain | Tables | Migration |
+|---|---|---|
+| Agent | `agent_conversations`, `agent_messages`, `agent_runs` | 0001 |
+| Research (USP) | `research_projects`, `audience_personas`, `competitor_ads`, `trend_signals`, `community_insights`, `research_sources` | 0001 |
+| Campaigns + Creative | `campaigns`, `creatives`, `creative_images`, `brand_voices` | 0001 |
+| Landing pages | `landing_pages`, `page_views`, `leads` | 0001 |
+| Analytics | `performance_metrics`, `anomalies`, `ai_insights` | 0001 |
+| **Payments (Wave 7)** | `products`, `orders`, `order_items`, `payments`, `mandates`, `audit_events`, `webhook_receipts` | 0003 |
 
-`campaigns` is the hub: research, creatives, landing pages, and analytics all reference it. RLS
-strategy (owner-scoped + public landing-page read + anonymous lead/view insert) is documented in
-[ADR 0003](./adr/0003-rls-strategy.md).
+`campaigns` is the hub: research, creatives, landing pages, analytics, and **orders** all reference
+it. Money columns are `bigint` paise (never float). RLS strategy (owner-scoped + public
+deployed-page read + anonymous lead/view/order insert) is documented in
+[ADR 0003](./adr/0003-rls-strategy.md) and [ADR 0005](./adr/0005-razorpay-money-loop.md).
 
 ---
 
@@ -202,8 +222,10 @@ strategy (owner-scoped + public landing-page read + anonymous lead/view insert) 
 
 | System | Used for | Client | Degradation |
 |---|---|---|---|
-| **Azure OpenAI** | GPT-4o reasoning/copy (Vercel AI SDK), GPT-Image visuals (REST) | `src/lib/ai/azure.ts` | `ConfigurationError` when unset; retries + timeouts on every call |
-| **Bright Data MCP** | SERP + scraping (free), structured platform data (Pro) | `src/lib/research/brightdata.ts` | Pro `web_data_*` degrades to free `search_engine` + `scrape_as_markdown` |
+| **Azure AI Foundry** | gpt-5.3-chat reasoning/copy (Vercel AI SDK), MAI-Image-2.5 visuals (REST) | `src/lib/ai/azure.ts` | `ConfigurationError` when unset; retries + timeouts on every call |
+| **Bright Data** | SERP + scraping (free), structured platform data (Pro), Scraping Browser | `src/lib/research/brightdata.ts`, `scraping-browser.ts` | Pro `web_data_*` degrades to free `search_engine` + `scrape_as_markdown` |
 | **Supabase** | Postgres + RLS, Auth, Storage, Realtime | `src/lib/supabase/*` | App boots read-only/"configure" state when unset |
+| **Razorpay** | Test-mode Orders API + Standard Checkout + Webhooks | `src/lib/payments/razorpay.ts` | `ConfigurationError` when unset; in-memory demo orders; `withRetry`/`withTimeout` on every call |
 
-See [ADR 0001](./adr/0001-tech-stack.md) for why each was chosen.
+See [ADR 0001](./adr/0001-tech-stack.md) for the original stack choices and
+[ADR 0005](./adr/0005-razorpay-money-loop.md) for the Razorpay integration rationale.

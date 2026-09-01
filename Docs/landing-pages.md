@@ -21,6 +21,9 @@ Cross-references: [progress](./progress.md), [architecture](./architecture.md),
    traffic split, per-variant conversion tracking, and one-click auto-promote.
 5. Works with **zero credentials**: when Azure is unset it produces a compelling
    seeded page; when Supabase is unset it uses a seeded in-memory store.
+6. **Razorpay Checkout** (Wave 7): a `checkout` section type mounts Razorpay
+   Standard Checkout on the deployed page, server-priced by SKU. See
+   [payments.md](./payments.md).
 
 ---
 

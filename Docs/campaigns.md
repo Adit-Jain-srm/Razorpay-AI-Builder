@@ -7,7 +7,8 @@ the "research first" flow: personas synthesized by the Audience Research Intelli
 Engine are imported straight into the brief.
 
 Cross-references: [architecture](./architecture.md), [research-engine](./research-engine.md),
-[progress](./progress.md). API contracts are consolidated in [api](./api.md).
+[progress](./progress.md), [payments](./payments.md). API contracts are consolidated in
+[api](./api.md).
 
 ---
 
@@ -79,6 +80,13 @@ the audience even if the source research project later changes or is deleted.
 
 Ad platforms are the research engine's `AD_PLATFORMS`: `google, meta, tiktok, taboola,
 linkedin, youtube, x`.
+
+### Audience allocations (Wave 7)
+
+The `budgetPlanSchema` now includes `audienceAllocations[]` — per-persona spend splits with
+observed performance metrics (`observedCtr`, `observedCvr`, `observedCpaPaise`, `gmvPaise`).
+The Operator's `reallocate_budget` tool writes these allocations based on the growth scorecard.
+See [payments.md](./payments.md).
 
 ---
 

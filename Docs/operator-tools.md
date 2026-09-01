@@ -115,6 +115,21 @@ fall back to the seeded demo campaign.
 | `daily_brief` | `campaignId?` | `daily-brief` — natural-language performance brief |
 | `proactive_briefing` | `campaignId?` | `proactive-briefing` — brief + anomalies + recommendations + one-tap next actions |
 
+### Payments (`category: payments`) — Wave 7
+
+| Tool | Params | Returns (artifact) |
+|---|---|---|
+| `reallocate_budget` | `campaignId`, `reason` (≥24 chars), `maxShiftPercent?` | `budget-reallocation` — proposal (from/to/shift), scorecard, audit event |
+| `get_growth_scorecard` | `campaignId?` | `growth-scorecard` — per-audience CTR/CVR/CPA/GMV, best/worst |
+| `explain_money_action` | `campaignId`, `limit?` | `audit-timeline` — timestamped events with actor/reason/outcome |
+
+### Commerce (`category: commerce`) — Wave 7
+
+| Tool | Params | Returns (artifact) |
+|---|---|---|
+| `list_catalog` | — | `catalog` — all products with INR prices, upsell graph |
+| `recommend_upsells` | `sku` | `upsell-set` — upsells + cross-sells with reasons |
+
 ### Built-ins (`category: navigation | platform`)
 
 `navigate`, `list_capabilities`, `summarize_context` — dependency-free; prove the
@@ -131,12 +146,16 @@ into the next:
 ```
 goal
  └─ research_audience        → personas + pain points + citations
-     └─ create_campaign      → campaign id (carry it forward), grounded in the pain points
+     └─ create_campaign      → campaign id (INR, sales, ₹10K), grounded in the pain points
          └─ generate_creatives  → hook-analyzed, scored variants for the campaign
              └─ score_creative / regenerate_creative  → compare + repair
-                 └─ build_landing_page → deploy_landing_page → live /lp/{slug}
-                     └─ get_performance_summary / detect_anomalies / get_recommendations / daily_brief
-                         └─ proactive_briefing → improvement loop
+                 └─ build_landing_page → deploy_landing_page → live /lp/{slug} with checkout
+                     └─ list_catalog / recommend_upsells → product catalog + upsell suggestions
+                         └─ (human or AI buyer pays via Razorpay Checkout)
+                             └─ get_growth_scorecard → per-audience CTR/CVR/CPA/GMV
+                                 └─ reallocate_budget → shift worst→best (gated by policy, writes audit)
+                                     └─ explain_money_action → full audit trail
+                                         └─ On PAYMENT_FAILED: stop-rule, offer new order
 ```
 
 The **campaign id is the spine**: `create_campaign` returns it; creatives, the
@@ -145,8 +164,8 @@ other thread — they ground both the campaign brief and the creative copy.
 
 The runtime (`src/lib/agent/runtime.ts`) drives the chain via the Vercel AI SDK's
 multi-step tool loop (`stopWhen: stepCountIs(DEFAULT_MAX_STEPS)`). The step budget
-is **16** — sized for the full path plus a final summary turn, so a long
-autonomous run is never cut off mid-chain.
+is **24** — sized for the full Track 01 path (research through audit) plus a final
+summary turn.
 
 ### Offline demo
 

@@ -205,6 +205,18 @@ Run: `npx vitest run src/lib/analytics src/lib/seed src/lib/services/analytics.s
 
 ---
 
+## Extended funnel (Wave 7 — Track 01)
+
+`extendedFunnel()` in `aggregate.ts` replaces the modeled LP-view/lead ratios with real data
+when Razorpay orders are available:
+
+`Impressions (simulated) → Clicks (simulated) → LP Views (real page_views) → Checkout Started (orders created) → Paid (payments captured) → GMV paise`
+
+When no checkout data exists, the function falls back to the original modeled funnel. The UI
+must label simulated metrics honestly. See [payments.md](./payments.md).
+
+---
+
 ## Follow-ups
 
 - **PDF report export** - intentionally not built (would require a new dependency).
