@@ -54,9 +54,15 @@ export async function POST(request: Request) {
       created_at?: number;
     };
 
-    const eventId = (event as Record<string, unknown>).account_id
-      ? `${(event as Record<string, unknown>).account_id}_${event.event}_${event.created_at}`
-      : `${event.event}_${event.created_at}`;
+    // Razorpay event bodies include a top-level `event` field and sometimes `account_id`.
+    // Use a composite key for idempotency since the raw webhook body does not have a stable `event_id`.
+    const eventCreatedAt = event.created_at ?? 0;
+    const paymentEntity = (event.payload as Record<string, Record<string, Record<string, unknown>>>)
+      ?.payment?.entity;
+    const paymentId = typeof paymentEntity?.id === "string" ? paymentEntity.id : "";
+    const eventId = paymentId
+      ? `${event.event}_${paymentId}`
+      : `${event.event}_${eventCreatedAt}`;
 
     // Idempotency: skip already-processed events
     if (processedEventIds.has(eventId)) {
@@ -65,8 +71,8 @@ export async function POST(request: Request) {
     }
 
     // Replay guard: ignore stale events (but still return 200)
-    if (event.created_at) {
-      const ageS = Date.now() / 1000 - event.created_at;
+    if (eventCreatedAt > 0) {
+      const ageS = Date.now() / 1000 - eventCreatedAt;
       if (ageS > MAX_EVENT_AGE_S) {
         logger.info("Webhook stale event ignored", { eventId, ageS: Math.round(ageS) });
         return NextResponse.json({ status: "ok", stale: true });
