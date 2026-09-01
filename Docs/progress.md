@@ -291,7 +291,7 @@ A module is **not done** until all of the following are true (evidence shown, no
 | RESOLVED | Bright Data Scraping Browser wiring | **Wired + LIVE-validated 2026-06-30:** `scraping-browser.ts` (`puppeteer-core` over WSS) drives competitor-ads with a browser->unlocker->fixtures fallback; live SERP (`brd_json=1` -> JSON) + Unlocker round-trip confirmed |
 | KNOWN | Meta Ad Library live extraction | JS-heavy + access-limited (live hit `Page.navigate domain limit reached`); provider falls back to Unlocker markdown -> seeded fixtures. A clean fallback is the accepted outcome |
 | OPEN | Demo seed realism (90-day analytics) | `analytics-seed` phase: fatigue curves, seasonality, platform behaviors |
-| RESOLVED | Git remote | `origin` exists -> https://github.com/Adit-Jain-srm/MediaOS (branch `main`) |
+| RESOLVED | Git remote | `origin` exists -> https://github.com/Adit-Jain-srm/Razorpay-AI-Builder (branch `main`) |
 | RESOLVED | Reference repo leaking into build | Excluded in `.gitignore`, `tsconfig`, `eslint`, `.vercelignore` |
 
 ---

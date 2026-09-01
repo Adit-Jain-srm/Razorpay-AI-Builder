@@ -1,6 +1,6 @@
 /**
- * Payments barrel — client-safe exports (types + policy + HMAC).
- * Server-only modules (razorpay.ts client) must be imported by explicit path.
+ * Payments barrel — client-safe exports (types + policy + HMAC + audit + growth).
+ * Server-only modules (razorpay.ts, products.ts) must be imported by explicit path.
  */
 
 export type {
@@ -32,3 +32,23 @@ export {
 } from "./policy";
 
 export { verifyCheckoutSignature, verifyWebhookSignature } from "./hmac";
+
+export {
+  writeAudit,
+  getAuditTimeline,
+  getFullAuditLog,
+  countAuditEvents,
+  clearAuditStore,
+  auditActionLabel,
+  isFailureAction,
+  type AuditRecord,
+} from "./audit";
+
+export {
+  buildGrowthScorecard,
+  computeReallocation,
+  applyReallocation,
+  type AudienceMetrics,
+  type GrowthScorecard,
+  type ReallocationProposal,
+} from "./growth";

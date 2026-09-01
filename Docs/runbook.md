@@ -100,7 +100,7 @@ npm run seed       # (planned)
 
 ## 9. Deploy to Vercel
 
-1. Import the repo at https://github.com/Adit-Jain-srm/MediaOS into Vercel.
+1. Import the repo at https://github.com/Adit-Jain-srm/Razorpay-AI-Builder into Vercel.
 2. Framework preset: **Next.js**. Build command and output are auto-detected.
 3. Add every variable from section 3 in **Project Settings -> Environment Variables** (production +
    preview). Keep `SUPABASE_SERVICE_ROLE_KEY` and `AZURE_OPENAI_API_KEY` server-side only.
