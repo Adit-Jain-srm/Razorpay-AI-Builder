@@ -44,7 +44,7 @@ the merchant transactable by external AI buyers. All money is stored as integer 
 
 ## Public GitHub repository
 
-https://github.com/Adit-Jain-srm/MediaOS
+https://github.com/Adit-Jain-srm/Razorpay-AI-Builder
 
 ## 5-minute pitch video (unlisted)
 
@@ -54,18 +54,40 @@ _URL to be added after recording._
 
 ## What broke and how it was fixed
 
-_Append-only log. Each entry added as the incident happens during implementation._
+### 2026-09-02 — Unbounded in-memory stores (memory leak on warm serverless)
 
-### Template (copy for each incident)
+**What went wrong:** Three in-memory data structures (`processedEventIds` Set in the webhook handler, `sessions` Map in checkout sessions, `auditStore` array) had no size cap. On a warm Vercel serverless instance handling many requests, these would grow unbounded until the instance recycled.
 
-```
-### [Date] — [Short title]
+**How I reproduced it:** AI-debt audit skill flagged the pattern during code review — `new Set()` / `new Map()` with `.add()`/`.set()` but no eviction.
 
-**What went wrong:** ...
-**How I reproduced it:** ...
-**Evidence collected:** ...
-**Root cause:** ...
-**Fix:** ...
-**Verification:** ...
-**Prevention:** ...
-```
+**Root cause:** Classic AI-generated code pattern: works on the happy path but ignores the production lifecycle of a long-running process.
+
+**Fix:** Added FIFO eviction caps: 10K events, 1K sessions, 10K audit records. Oldest entries are evicted when the cap is reached. `trackEventId()` helper encapsulates the cap logic for the webhook.
+
+**Verification:** `npm test` (499 passing). Build succeeds. No memory growth in bounded usage.
+
+**Prevention:** Added to the execution rule: "No unbounded in-memory stores."
+
+### 2026-09-02 — Cross-sell savings calculation returned wrong ₹ amount
+
+**What went wrong:** The `recommend_upsells` tool calculated bundle savings as `product.amountPaise + getProduct(product.upsellSkus[0])?.amountPaise - bundle.amountPaise`. When the primary product had no upsells, `upsellSkus[0]` was `undefined`, so `getProduct(undefined)` returned `undefined`, and the `?? 0` fallback made the savings negative or zero.
+
+**How I reproduced it:** Self-review read the code line by line and traced the data flow for the BUNDLE product (which has empty `upsellSkus`).
+
+**Root cause:** AI generated a shortcut accessing `[0]` instead of summing all components.
+
+**Fix:** Changed to `.reduce()` over all component SKUs, clamped to `Math.max(0, ...)`, with a fallback text when savings are zero.
+
+**Verification:** The catalog test "bundle is cheaper than sum of components" still passes.
+
+### 2026-09-02 — `as unknown` type casts bypassing runToolSafely
+
+**What went wrong:** Two Operator tools (`reallocate_budget` on policy denial, `recommend_upsells` on unknown SKU) returned `{ ok: false, error }` directly using `as unknown as ReturnType<typeof ok>` — bypassing the `runToolSafely` error handling pattern that all other tools use.
+
+**How I reproduced it:** Architecture review identified the pattern: every other tool `throw`s inside `runToolSafely`, which catches and converts to `{ ok: false }`. These two tools broke the pattern.
+
+**Root cause:** AI-generated code took a shortcut to avoid throwing.
+
+**Fix:** Changed both to `throw new Error(...)` — `runToolSafely` catches them and returns the structured error the Operator can recover from.
+
+**Verification:** `npm run typecheck` (0 errors), `npm test` (499 passing). Zero `as unknown` in payments code.

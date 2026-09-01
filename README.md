@@ -30,18 +30,22 @@ Most AI marketing tools bolt a chatbot onto existing workflows. MediaOS inverts 
 
 ## How to use the demo
 
-1. Open [mediaos.vercel.app](https://mediaos-kappa.vercel.app)
-2. The **Command Center** shows a live campaign ("Retirement Income Weekly") with real analytics, creatives, and a deployed landing page.
-3. Open the **Operator** and ask: *"Find a fresh angle for near-retirees worried about inflation and build me 3 Meta ads."*
-4. Watch the agent plan, research (Bright Data), synthesize a persona, and generate hook-analyzed ad variants with real AI visuals.
-5. Ask *"Build a landing page for the strongest angle"* - it deploys a real `/lp/...` page you can open on your phone.
-6. Open **Performance Intelligence** - the AI daily brief flags anomalies and recommends actions.
+1. Open [mediaos-kappa.vercel.app](https://mediaos-kappa.vercel.app)
+2. The **Command Center** shows live campaigns with analytics, creatives, and deployed landing pages.
+3. Open the **Operator** and ask: *"Launch an AarogyaFit campaign targeting fitness-conscious 22–35 year olds in India."*
+4. Watch the agent plan, research (Bright Data), synthesize personas, create a campaign (INR budget), and generate hook-analyzed ad variants.
+5. Ask *"Build a landing page with Razorpay checkout"* — it deploys a real `/lp/...` page with a Pay button.
+6. On the deployed page, click **Pay now** — enter a test card (`4111 1111 1111 1111`) or UPI (`success@razorpay`).
+7. Open **Performance Intelligence** — the AI daily brief flags anomalies and recommends budget reallocations.
+8. Ask the Operator *"Show the audit trail"* — see every money action (order created, payment captured, budget reallocated) with timestamps and reasons.
+9. Test failure: use UPI `failure@razorpay` — the audit shows the stop-rule: "do not retry this order."
+10. Visit `/api/commerce/catalog` — the ACP-inspired product feed is agent-readable.
 
 ---
 
 ## Architecture
 
-MediaOS is agent-native: the Operator is the primary surface, with a plan-execute-observe runtime that calls 17 typed, Zod-validated tools spanning every module. The research engine follows an OpenBB-inspired TET (Transform-Extract-Transform) provider abstraction with 6 providers running in parallel over Bright Data (SERP API, Web Unlocker, Scraping Browser). AI generation uses Azure AI Foundry (gpt-5.3-chat for reasoning/copy, MAI-Image-2.5 for visuals) through the Vercel AI SDK. Persistence is Supabase (Postgres with RLS, Auth, Storage). See [Docs/architecture.md](Docs/architecture.md) for the full system diagram and data-flow.
+MediaOS is agent-native: the Operator is the primary surface, with a plan-execute-observe runtime that calls 22 typed, Zod-validated tools spanning research, campaigns, creatives, landing pages, analytics, payments, and commerce. The research engine follows an OpenBB-inspired TET (Transform-Extract-Transform) provider abstraction with 6 providers running in parallel over Bright Data (SERP API, Web Unlocker, Scraping Browser). Every money action is gated by a deterministic policy engine and logged to an append-only audit trail. AI generation uses Azure AI Foundry (gpt-5.3-chat for reasoning/copy, MAI-Image-2.5 for visuals) through the Vercel AI SDK. Payments use Razorpay Test Mode (Orders API + Standard Checkout + Webhooks). Persistence is Supabase (Postgres with RLS, Auth, Storage — 26 tables across 3 migrations). See [Docs/architecture.md](Docs/architecture.md) for the full system diagram and data-flow.
 
 ## Tech Stack
 
@@ -49,18 +53,19 @@ MediaOS is agent-native: the Operator is the primary surface, with a plan-execut
 - **Styling:** Tailwind CSS v4, shadcn (Base UI), Geist/Geist Mono
 - **AI:** Azure AI Foundry (gpt-5.3-chat + MAI-Image-2.5), Vercel AI SDK v7
 - **Research data:** Bright Data (SERP API, Web Unlocker, Scraping Browser via puppeteer-core)
-- **Database:** Supabase (Postgres + RLS + Auth + Storage)
+- **Payments:** Razorpay Test Mode (Orders API, Standard Checkout, Webhooks)
+- **Database:** Supabase (Postgres + RLS + Auth + Storage) — 26 tables, 3 migrations
 - **State:** Zustand, TanStack Query
 - **Charts:** Recharts
-- **Testing:** Vitest (418 unit/integration tests), Playwright (e2e)
+- **Testing:** Vitest (499 unit/integration tests), Playwright (e2e)
 - **Quality:** ESLint, Conventional Commits, strict TSConfig
 - **Deploy:** Vercel (Edge + Node runtimes)
 
 ## Running locally
 
 ```bash
-git clone https://github.com/Adit-Jain-srm/MediaOS.git
-cd MediaOS
+git clone https://github.com/Adit-Jain-srm/Razorpay-AI-Builder.git
+cd Razorpay-AI-Builder
 npm install
 cp .env.example .env.local
 # Fill in credentials (see .env.example for guidance)
