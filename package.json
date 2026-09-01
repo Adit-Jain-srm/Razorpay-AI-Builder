@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "smoke:azure": "node scripts/smoke-azure.mjs",
     "smoke:brightdata": "node scripts/smoke-brightdata.mjs",
-    "smoke:browser": "node scripts/smoke-browser.mjs"
+    "smoke:browser": "node scripts/smoke-browser.mjs",
+    "smoke:razorpay": "node --env-file=.env.local scripts/smoke-razorpay.mjs"
   },
   "dependencies": {
     "@ai-sdk/azure": "^4.0.2",

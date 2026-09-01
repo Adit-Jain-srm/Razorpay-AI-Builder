@@ -1,7 +1,7 @@
 # ADR 0005: Razorpay Money Loop (Track 01)
 
-- **Status:** Proposed
-- **Date:** 2026-09-01
+- **Status:** Accepted
+- **Date:** 2026-09-01 (proposed), 2026-09-02 (accepted after Phase 7 implementation)
 - **Deciders:** Wave 7 build (Razorpay AI Buildathon Track 01)
 
 ## Context

@@ -498,3 +498,17 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   `aggregate.ts`: `extendedFunnel` with Checkout Started + Paid stages (falls back to modeled when
   no Razorpay data); `ExtendedFunnelStage` type. 8 audit + 6 funnel tests. Gate: `tsc` (0),
   `lint` (0), `npm test` (**499 passing**, 52 files), `npm run build` (success). Committed and pushed.
+- **2026-09-02** — Self-review: extracted shared product catalog (`products.ts`), fixed mutable
+  `.sort()` in audit (spread-copy), fixed CPA ratio text in growth reason, fixed premature
+  `setLoading(false)` in checkout button. Gate green. Committed and pushed.
+- **2026-09-02** — Phase 7: Operator golden path + AarogyaFit. 5 new payment/commerce tools
+  (`reallocate_budget`, `get_growth_scorecard`, `explain_money_action`, `list_catalog`,
+  `recommend_upsells`). OPERATOR_IDENTITY rewritten as growth agent; 12-step golden path; 12
+  principles (mandate, stop-rule, honesty). `DEFAULT_MAX_STEPS` 16→24. AarogyaFit canonical seed
+  (campaign ID, name, slug, SKUs, pain points). Nav descriptions updated. Module-tools test updated
+  (22 tools). Gate: `tsc` (0), `lint` (0), `npm test` (**499 passing**, 52 files), `npm run build`
+  (success). Committed and pushed. ADR 0005 → Accepted.
+- **2026-09-02** — Phase 8: Smoke script + validation. `scripts/smoke-razorpay.mjs` (creds-gated,
+  mirrors azure/brightdata pattern). `package.json` `smoke:razorpay`. Full gate: `tsc` (0), `lint`
+  (0), `npm test` (**499 passing**, 52 files), `npm run build` (success). ADR 0005 → Accepted.
+  Committed and pushed.
