@@ -28,10 +28,10 @@ todos:
     status: completed
   - id: e2e-validation
     content: "Phase 8: Full Playwright golden path + failure matrix + smoke-razorpay; prove-it gate; commit; push"
-    status: in_progress
+    status: completed
   - id: live-deploy
     content: "Phase 9: Vercel env + webhook + live test-card success and failure@razorpay; runbook; commit if needed; push"
-    status: pending
+    status: in_progress
   - id: pitch-submit
     content: "Phase 10: Pitch video assets, architecture, submission-draft, what-broke log; final gate; push; apply"
     status: pending

@@ -1,12 +1,12 @@
-# MediaOS - The AI Media Buyer
+# MediaOS — Autonomous Merchant Growth Agent
 
-> One tool. Full funnel. Research-powered.
+> Research buyers. Deploy campaigns. Collect ₹. Optimize with an audit trail.
 
-[Live Demo](https://mediaos-kappa.vercel.app) | [Video Walkthrough](#how-to-use-the-demo)
+[Live Demo](https://mediaos-kappa.vercel.app) | [Video Walkthrough](#how-to-use-the-demo) | [Razorpay AI Buildathon Track 01](https://razorpay.com/buildathon/)
 
 ## What does this tool do?
 
-MediaOS is an AI media buyer you can hire in a browser tab. Its Operator agent plans, executes, monitors, and improves paid-media campaigns end to end. You give it a goal ("launch ads for a crypto newsletter targeting near-retirees"), and it researches the audience with live web data, synthesizes personas from real pain points, generates platform-specific ad creatives with AI visuals, deploys a landing page you can open on your phone, and watches performance metrics for anomalies.
+MediaOS is an autonomous AI growth agent for Indian merchants. Its Operator agent researches buyers with live web data, orchestrates a bounded ₹ campaign, generates platform-specific creatives and conversion-optimized landing pages with Razorpay test-mode Checkout, exposes an agent-readable product catalog, upsells within a signed mandate, and optimizes toward a measurable ₹ objective — with an append-only audit trail on every money action, including graceful handling of payment failures.
 
 The core differentiator is the **Audience Research Intelligence Engine**: six real-data providers (competitor ads, search intent, Reddit/community, news, social listening, web intelligence) aggregated through Bright Data the way OpenBB aggregates financial data. Every downstream artifact (copy, images, landing pages, recommendations) is grounded in cited, real-world audience intelligence. This is live and clickable, not a prototype.
 
@@ -18,15 +18,13 @@ Most AI marketing tools bolt a chatbot onto existing workflows. MediaOS inverts 
 
 ## What would you build next?
 
-**Closed-loop learning.** Live ad-platform APIs (Google, Meta, TikTok) feeding real performance data back into the research engine so the system learns which audience angles convert, not just which ones exist.
+**Wave 7 (Track 01) has been built.** The Razorpay money loop, policy engine, audit trail, agent-readable catalog, checkout sessions, upsell graph, and executable budget reallocation are all shipped. What remains on the roadmap:
 
-**Real-time competitive monitoring.** Alerts when a competitor launches new creatives or pauses campaigns, feeding fresh intel into the Operator's planning loop.
+**Live ad-platform APIs.** Google, Meta, TikTok feeding real spend data back so CPA is not simulated.
 
-**MCP server.** Expose MediaOS as a tool server so existing AI stacks can call the Operator, its research engine, and creative generation programmatically.
+**NPCI UAP integration.** When the Unified Agent Protocol spec is public, register MediaOS as a verified agent for UPI agentic payments.
 
-**CRM/LTV correlation.** Link downstream revenue to upstream research angles to prove which audience insights drive lifetime value, not just clicks.
-
-Every new data provider makes the entire platform smarter. That is the OpenBB compounding effect applied to paid media.
+**Full ACP certification.** Submit the product feed to OpenAI for Instant Checkout eligibility in ChatGPT.
 
 ---
 
@@ -91,6 +89,9 @@ The app boots without credentials in a degraded demo mode. To enable real AI and
 | `BRIGHTDATA_WEB_UNLOCKER_ZONE` | Web Unlocker zone (default: `mcp_unlocker`) |
 | `BRIGHTDATA_SERP_ZONE` | SERP zone (default: `serp_api1`) |
 | `BRIGHTDATA_BROWSER_WS` | Scraping Browser WSS endpoint |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay Test Mode key ID (`rzp_test_…`) |
+| `RAZORPAY_KEY_SECRET` | Razorpay key secret (server only) |
+| `RAZORPAY_WEBHOOK_SECRET` | Razorpay webhook secret (server only, ≥32 chars) |
 
 ## License
 
