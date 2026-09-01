@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: "%s · MediaOS",
   },
   description:
-    "MediaOS is an AI media buyer you can hire in a browser tab. The Operator agent plans, executes, monitors, and improves campaigns end to end, powered by a live audience research intelligence engine.",
+    "MediaOS is an autonomous AI growth agent for Indian merchants. It researches buyers, deploys campaigns, collects Razorpay revenue, and optimizes toward a bounded ₹ objective with an audit trail on every money action.",
   applicationName: "MediaOS",
   openGraph: {
     images: ["/og.svg"],

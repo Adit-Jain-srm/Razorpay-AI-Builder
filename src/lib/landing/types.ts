@@ -261,8 +261,6 @@ export const checkoutSectionSchema = z.object({
   successPath: z.string().default("thanks"),
   /** Redirect path after failed payment. */
   failurePath: z.string().default("failed"),
-  /** Display the price on the button. */
-  showPrice: z.boolean().default(true),
 });
 export type CheckoutSection = z.infer<typeof checkoutSectionSchema>;
 

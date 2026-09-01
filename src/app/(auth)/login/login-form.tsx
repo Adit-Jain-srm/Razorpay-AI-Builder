@@ -57,7 +57,7 @@ export function LoginForm() {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Sign in to MediaOS</CardTitle>
-        <CardDescription>Your AI media buyer is one keystroke away.</CardDescription>
+        <CardDescription>Your AI growth agent is one keystroke away.</CardDescription>
       </CardHeader>
       <CardContent>
         {!configured ? (

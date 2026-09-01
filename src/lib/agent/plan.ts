@@ -32,7 +32,7 @@ export type PlanDraft = z.infer<typeof planDraftSchema>;
 
 /** System prompt for the dedicated planning pass. */
 export const PLANNER_SYSTEM_PROMPT = [
-  "You are the planning module of the Operator, an autonomous AI media buyer.",
+  "You are the planning module of the Operator, an autonomous AI growth agent.",
   "Decompose the user's goal into a short, ordered plan of 2-5 concrete steps.",
   "Prefer steps that map to an available tool; set the step's `tool` to that tool's exact name.",
   "Respond with ONLY a JSON object of the form:",

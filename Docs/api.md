@@ -17,8 +17,13 @@ its module phase.
 |---|---|---|---|
 | `/login`, `/register` | page | Auth surfaces; submit via server actions | Live (UI) |
 | `/lp/[slug]` | page (RSC) | Render a **deployed** landing page (RLS public read) | Live (route) |
-| `/api/lead` | POST | Anonymous lead capture into `leads` (validated, owner resolved from deployed page) | Planned |
-| `/api/page-view` | POST | Anonymous page-view ping into `page_views` | Planned |
+| `/api/leads` | POST | Anonymous lead capture into `leads` (validated, owner resolved from deployed page) | Live |
+| `/api/page-views` | POST | Anonymous page-view ping into `page_views` | Live |
+| `/api/checkout/orders` | POST | Create a Razorpay order (server-priced SKU) | Live (Wave 7) |
+| `/api/checkout/verify` | POST | Verify checkout handler HMAC signature | Live (Wave 7) |
+| `/api/webhooks/razorpay` | POST | Razorpay webhook (payment.captured/failed, order.paid) | Live (Wave 7) |
+| `/api/commerce/catalog` | GET | ACP-inspired product catalog feed (public) | Live (Wave 7) |
+| `/api/commerce/checkout/sessions` | POST/GET | Create or list checkout sessions | Live (Wave 7) |
 
 ## Auth
 
@@ -79,8 +84,8 @@ Services: `creativeService`; images via `generateImage` (`src/lib/ai/azure.ts`) 
 |---|---|---|---|
 | `generateLandingPage` | server action | brief + `landingTemplateSchema` | Planned |
 | `deployLandingPage` | server action | id (sets `status = 'deployed'`) | Planned |
-| `captureLead` (`/api/lead`) | POST | `leadCaptureSchema` | Planned |
-| `recordPageView` (`/api/page-view`) | POST | `pageViewSchema` | Planned |
+| `captureLead` (`/api/leads`) | POST | `leadCaptureSchema` | Live |
+| `recordPageView` (`/api/page-views`) | POST | `pageViewSchema` | Live |
 
 Service: `landingService`. Anonymous writes rely on the RLS deployed-page join
 ([ADR 0003](./adr/0003-rls-strategy.md)).

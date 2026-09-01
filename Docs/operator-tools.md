@@ -69,7 +69,7 @@ registerModuleTools();    // every module tool below
 
 ## 2. The tool catalog
 
-17 tools across five modules, plus the three built-ins. Param schemas are tight
+22 tools across seven modules, plus the three built-ins. Param schemas are tight
 and well-described; campaign-scoped tools accept an optional `campaignId` and
 fall back to the seeded demo campaign.
 
@@ -229,7 +229,7 @@ service mocked):
 
 - Each tool's `execute`: happy path (mock returns → correct artifact) **and** error
   path (module throws → structured `{ ok: false }`, never throws).
-- Registry: `registerModuleTools` wires all 17 tools and coexists with the
+- Registry: `registerModuleTools` wires all 22 tools and coexists with the
   built-ins.
 - End-to-end runtime: a demo-mode run walks the golden path and an injected
   model stream drives an explicit multi-tool plan — both assert tools execute in

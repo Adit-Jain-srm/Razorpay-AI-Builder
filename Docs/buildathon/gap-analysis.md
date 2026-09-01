@@ -12,7 +12,7 @@ Current state as of Waves 0–6 (shipped, deployed at https://mediaos-kappa.verc
 | Campaign strategist (brief, platforms, budget) | **Have** | `src/lib/campaign/**`, [Docs/campaigns.md](../campaigns.md) | Plans spend; does not move money |
 | Creative agent (copy, images, hooks, scoring) | **Have** | `src/lib/creative/**`, [Docs/creative-studio.md](../creative-studio.md) | No ad-platform publish |
 | Landing generate/deploy/A/B | **Have** | `src/lib/landing/**`, [Docs/landing-pages.md](../landing-pages.md) | CTA is email (`lead_form`), not checkout |
-| Operator (17 tools, 16-step budget) | **Have** | `src/lib/agent/**`, [Docs/operator-tools.md](../operator-tools.md) | Golden path ends at analytics; no money tools |
+| Operator (22 tools, 24-step budget) | **Have** | `src/lib/agent/**`, [Docs/operator-tools.md](../operator-tools.md) | Golden path includes checkout, catalog, upsell, audit |
 | Analytics | **Partial** | `src/lib/analytics/**`, [Docs/analytics.md](../analytics.md) | CTR/CPA seeded; funnel LP/leads modeled (`LP_VIEW_RATE=0.82`); recs are display-only |
 | Razorpay Checkout / Orders / webhooks | **Missing** | Zero `razorpay` in `src/` | Entire money loop |
 | Audit trail / explainable money | **Missing** | `agent_runs` stores tool JSON but no money ledger | No mandate, no policy, no audit UI |
