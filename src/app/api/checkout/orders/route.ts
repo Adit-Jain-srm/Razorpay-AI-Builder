@@ -28,7 +28,7 @@ const orderRequestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const parsed = orderRequestSchema.safeParse(body);
 
     if (!parsed.success) {

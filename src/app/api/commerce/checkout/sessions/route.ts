@@ -19,8 +19,17 @@ import { getProduct } from "@/lib/payments/products";
 
 export const runtime = "nodejs";
 
-/** In-memory session store (demo). */
+/** In-memory session store (demo). Capped to prevent unbounded growth. */
 const sessions = new Map<string, SessionData>();
+const MAX_SESSIONS = 1_000;
+
+function storeSession(id: string, session: SessionData): void {
+  if (sessions.size >= MAX_SESSIONS) {
+    const oldest = sessions.keys().next().value;
+    if (oldest !== undefined) sessions.delete(oldest);
+  }
+  sessions.set(id, session);
+}
 
 interface SessionItem {
   id: string;
@@ -50,7 +59,7 @@ const createSessionSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const parsed = createSessionSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -105,7 +114,7 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    sessions.set(sessionId, session);
+    storeSession(sessionId, session);
 
     return NextResponse.json({
       session_id: sessionId,

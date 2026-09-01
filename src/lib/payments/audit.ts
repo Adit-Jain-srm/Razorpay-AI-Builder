@@ -21,6 +21,7 @@ export interface AuditRecord extends AuditEntry {
 }
 
 const auditStore: AuditRecord[] = [];
+const MAX_AUDIT_RECORDS = 10_000;
 
 /** Append an audit event. Returns the record with id + timestamp. */
 export function writeAudit(entry: AuditEntry, _userId = "demo"): AuditRecord {
@@ -29,6 +30,9 @@ export function writeAudit(entry: AuditEntry, _userId = "demo"): AuditRecord {
     id: crypto.randomUUID(),
     timestamp: new Date().toISOString(),
   };
+  if (auditStore.length >= MAX_AUDIT_RECORDS) {
+    auditStore.shift();
+  }
   auditStore.push(record);
   return record;
 }

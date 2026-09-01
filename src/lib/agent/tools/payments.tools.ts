@@ -59,7 +59,7 @@ export function createPaymentTools(): AgentTool[] {
             ok: false,
             errorCode: policyCheck.code,
           });
-          return { ok: false, error: policyCheck.reason } as unknown as ReturnType<typeof ok>;
+          throw new Error(policyCheck.reason);
         }
 
         const scorecard = buildGrowthScorecard(params.campaignId, DEMO_AUDIENCES);
@@ -170,7 +170,7 @@ export function createCommerceTools(): AgentTool[] {
       runToolSafely("recommend_upsells", async () => {
         const product = getProduct(params.sku);
         if (!product) {
-          return { ok: false, error: `Unknown SKU: ${params.sku}` } as unknown as ReturnType<typeof ok>;
+          throw new Error(`Unknown SKU: ${params.sku}`);
         }
 
         const upsells = product.upsellSkus

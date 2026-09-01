@@ -21,11 +21,21 @@ import { verifyWebhookSignature } from "@/lib/payments/hmac";
 
 export const runtime = "nodejs";
 
-/** In-memory idempotency set (production: move to webhook_receipts table). */
+/** In-memory idempotency set with size cap to prevent unbounded growth on warm instances. */
 const processedEventIds = new Set<string>();
+const MAX_PROCESSED_EVENTS = 10_000;
 
 /** Replay guard: reject events older than 5 minutes. */
 const MAX_EVENT_AGE_S = 300;
+
+/** Evict oldest entries when the set grows too large. */
+function trackEventId(eventId: string): void {
+  if (processedEventIds.size >= MAX_PROCESSED_EVENTS) {
+    const first = processedEventIds.values().next().value;
+    if (first !== undefined) processedEventIds.delete(first);
+  }
+  processedEventIds.add(eventId);
+}
 
 export async function POST(request: Request) {
   try {
@@ -80,7 +90,7 @@ export async function POST(request: Request) {
     }
 
     // Mark as processed (respond 200 fast, then process)
-    processedEventIds.add(eventId);
+    trackEventId(eventId);
 
     // Process by event type
     switch (event.event) {
