@@ -334,3 +334,42 @@ Never repeat a class of mistake twice.
 - **Fix:** Use a GainNode with a 2-5ms linear ramp at both attack and release.
 - **Rule:** Never start an oscillator at full gain. Always ramp: `gain.linearRampToValueAtTime(target, now + 0.005)`.
 
+---
+
+## 2026-09-02 — Wave 7: Razorpay Money Loop (Track 01)
+
+### Razorpay HMAC: two secrets, two messages — never mix
+- **Problem:** Razorpay has two distinct HMAC paths — checkout handler (KEY_SECRET over `order_id|payment_id`) and webhook (WEBHOOK_SECRET over raw body bytes). Using the wrong secret or re-serializing the body silently breaks verification.
+- **Rule:** Always pass the RAW `request.text()` to webhook verification, never `JSON.stringify(JSON.parse(...))`. The checkout handler uses a different key. Test both with fixtures.
+
+### In-memory stores on serverless must be bounded
+- **Problem:** `processedEventIds` (Set), `sessions` (Map), and `auditStore` (array) grew unbounded on warm Vercel instances.
+- **Fix:** FIFO eviction caps: 10K/1K/10K. When cap is reached, delete/shift the oldest entry before adding.
+- **Rule:** Every in-memory store used for demo/degradation must have a size cap. Review all `new Set()`, `new Map()`, and module-level arrays.
+
+### `as unknown as T` bypasses runToolSafely — throw instead
+- **Problem:** Two Operator tools returned error objects via `as unknown` casts instead of throwing inside `runToolSafely`.
+- **Root cause:** AI shortcut to avoid understanding the error handling pattern.
+- **Fix:** `throw new Error(reason)` — `runToolSafely` catches it and returns `{ ok: false, error }`.
+- **Rule:** Inside `runToolSafely`, never return errors manually. Always throw.
+
+### Zod v4: `z.record` requires two arguments
+- **Problem:** `z.record(z.string())` compiled in Zod v3 but fails in v4.
+- **Fix:** `z.record(z.string(), z.string())`.
+- **Rule:** Always check Zod version when using `z.record`. v4 requires key + value schemas.
+
+### budgetPlanSchema.default([]) vs TypeScript construction
+- **Problem:** Adding `audienceAllocations: z.array(...).default([])` to the schema made `npm run typecheck` fail on templates that construct budget objects without the field.
+- **Root cause:** Zod `.default()` fills the value on `.parse()` input, but the TypeScript output type still requires the field.
+- **Fix:** Explicitly add `audienceAllocations: []` to every template/fixture that constructs budget objects.
+- **Rule:** When adding a `.default()` field to a Zod schema, grep for all object literals that construct that type and add the field.
+
+### StrReplace fails on Unicode em-dashes and smart quotes
+- **Problem:** Files containing U+2014 (—) or U+201C/U+201D ("") could not be matched by the StrReplace tool.
+- **Fix:** Use Python scripts or the Write tool to replace entire sections. Or match on a different unique substring that doesn't contain Unicode.
+- **Rule:** When StrReplace fails on "not found," check for Unicode characters in the target string.
+
+### Server-priced SKUs prevent amount tampering
+- **Design:** The checkout route accepts a `sku`, not an `amountPaise`. The server resolves the price from the product catalog. Client-supplied amounts are ignored.
+- **Rule:** Never trust money amounts from the browser. Server resolves from the catalog.
+
