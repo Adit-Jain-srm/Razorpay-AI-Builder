@@ -112,11 +112,25 @@ export const budgetAllocationSchema = z.object({
 });
 export type BudgetAllocation = z.infer<typeof budgetAllocationSchema>;
 
+/** Per-audience budget allocation with observed performance metrics (Wave 7). */
+export const audienceAllocationSchema = z.object({
+  personaId: z.string().min(1),
+  percent: z.number().min(0).max(100),
+  rationale: z.string().default(""),
+  observedCtr: z.number().nonnegative().optional(),
+  observedCvr: z.number().nonnegative().optional(),
+  observedCpaPaise: z.number().int().nonnegative().optional(),
+  gmvPaise: z.number().int().nonnegative().optional(),
+});
+export type AudienceAllocation = z.infer<typeof audienceAllocationSchema>;
+
 export const budgetPlanSchema = z.object({
   total: z.number().nonnegative().optional(),
   daily: z.number().nonnegative().optional(),
   currency: z.string().default("USD"),
   allocations: z.array(budgetAllocationSchema).default([]),
+  /** Per-audience spend allocation (Wave 7 Track 01). */
+  audienceAllocations: z.array(audienceAllocationSchema).default([]),
   source: generationSourceSchema.default("manual"),
   generatedAt: z.string().optional(),
 });

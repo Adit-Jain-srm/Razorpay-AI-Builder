@@ -142,6 +142,7 @@ const financialNewsletter: CampaignTemplate = {
       { platform: "taboola", percent: 30, rationale: "Native scale on finance sites." },
       { platform: "google", percent: 25, rationale: "High-intent capture." },
     ],
+    audienceAllocations: [],
     source: "template",
   },
 };
@@ -195,6 +196,7 @@ const ecommerce: CampaignTemplate = {
       { platform: "tiktok", percent: 35, rationale: "Cheap top-funnel discovery." },
       { platform: "google", percent: 25, rationale: "Capture branded + shopping intent." },
     ],
+    audienceAllocations: [],
     source: "template",
   },
 };
@@ -248,6 +250,7 @@ const saas: CampaignTemplate = {
       { platform: "linkedin", percent: 35, rationale: "Precise B2B targeting." },
       { platform: "meta", percent: 20, rationale: "Retargeting + lookalikes." },
     ],
+    audienceAllocations: [],
     source: "template",
   },
 };

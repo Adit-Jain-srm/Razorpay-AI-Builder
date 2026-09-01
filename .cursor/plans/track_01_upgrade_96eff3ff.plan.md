@@ -16,10 +16,10 @@ todos:
     status: completed
   - id: agentic-commerce
     content: "Phase 4: Catalog + sessions + conversational checkout + llms.txt; catalog e2e; commit; push"
-    status: in_progress
+    status: completed
   - id: upsell-orchestrator
     content: "Phase 5: Upsell graph + execute reallocate/scale/pause; INR objective; scorecard tests; commit; push"
-    status: pending
+    status: in_progress
   - id: audit-analytics-ui
     content: "Phase 6: Audit timeline UI + real Checkout→Paid funnel; analytics tests; commit; push"
     status: pending
