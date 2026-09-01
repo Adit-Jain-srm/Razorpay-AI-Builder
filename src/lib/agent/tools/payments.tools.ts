@@ -24,6 +24,12 @@ import { checkAll, checkCurrency, checkReason } from "@/lib/payments/policy";
 const PAYMENTS_CATEGORY = "payments" as const;
 const COMMERCE_CATEGORY = "commerce" as const;
 
+const DEMO_AUDIENCES: AudienceMetrics[] = [
+  { personaId: "A", personaName: "Fitness-conscious 18-30", ctr: 3.8, cvr: 4.1, cpaPaise: 16200, gmvPaise: 450_000, orders: 28, spend: 453_600 },
+  { personaId: "B", personaName: "Health-aware professionals", ctr: 2.4, cvr: 7.3, cpaPaise: 11800, gmvPaise: 620_000, orders: 41, spend: 483_800 },
+  { personaId: "C", personaName: "Casual fitness beginners", ctr: 5.1, cvr: 1.8, cpaPaise: 24300, gmvPaise: 180_000, orders: 12, spend: 291_600 },
+];
+
 /* -------------------------------------------------------------------------- */
 /* Payment tools                                                              */
 /* -------------------------------------------------------------------------- */
@@ -56,16 +62,9 @@ export function createPaymentTools(): AgentTool[] {
           return { ok: false, error: policyCheck.reason } as unknown as ReturnType<typeof ok>;
         }
 
-        // Demo scorecard data (A/B/C audiences from the plan)
-        const audiences: AudienceMetrics[] = [
-          { personaId: "A", personaName: "Fitness-conscious 18-30", ctr: 3.8, cvr: 4.1, cpaPaise: 16200, gmvPaise: 450_000, orders: 28, spend: 453_600 },
-          { personaId: "B", personaName: "Health-aware professionals", ctr: 2.4, cvr: 7.3, cpaPaise: 11800, gmvPaise: 620_000, orders: 41, spend: 483_800 },
-          { personaId: "C", personaName: "Casual fitness beginners", ctr: 5.1, cvr: 1.8, cpaPaise: 24300, gmvPaise: 180_000, orders: 12, spend: 291_600 },
-        ];
-
-        const scorecard = buildGrowthScorecard(params.campaignId, audiences);
+        const scorecard = buildGrowthScorecard(params.campaignId, DEMO_AUDIENCES);
         const proposal = computeReallocation(
-          audiences.map((a) => ({ personaId: a.personaId, percent: 33, rationale: "Initial equal split" })),
+          DEMO_AUDIENCES.map((a) => ({ personaId: a.personaId, percent: 33, rationale: "Initial equal split" })),
           scorecard,
           params.maxShiftPercent,
         );
@@ -104,12 +103,7 @@ export function createPaymentTools(): AgentTool[] {
     }),
     execute: async (params) =>
       runToolSafely("get_growth_scorecard", async () => {
-        const audiences: AudienceMetrics[] = [
-          { personaId: "A", personaName: "Fitness-conscious 18-30", ctr: 3.8, cvr: 4.1, cpaPaise: 16200, gmvPaise: 450_000, orders: 28, spend: 453_600 },
-          { personaId: "B", personaName: "Health-aware professionals", ctr: 2.4, cvr: 7.3, cpaPaise: 11800, gmvPaise: 620_000, orders: 41, spend: 483_800 },
-          { personaId: "C", personaName: "Casual fitness beginners", ctr: 5.1, cvr: 1.8, cpaPaise: 24300, gmvPaise: 180_000, orders: 12, spend: 291_600 },
-        ];
-        const scorecard = buildGrowthScorecard(params.campaignId ?? "demo", audiences);
+        const scorecard = buildGrowthScorecard(params.campaignId ?? "demo", DEMO_AUDIENCES);
         return ok(scorecard, {
           type: "growth-scorecard" as const,
           title: "Growth Scorecard",
@@ -192,12 +186,20 @@ export function createCommerceTools(): AgentTool[] {
         const crossSells = product.crossSellSkus
           .map((sku) => getProduct(sku))
           .filter(Boolean)
-          .map((p) => ({
-            sku: p!.sku,
-            title: p!.title,
-            price: `₹${(p!.amountPaise / 100).toLocaleString("en-IN")}`,
-            reason: `Bundle saves ₹${((product.amountPaise + (getProduct(product.upsellSkus[0])?.amountPaise ?? 0) - p!.amountPaise) / 100).toFixed(0)} vs buying separately`,
-          }));
+          .map((p) => {
+            const componentTotal = product.amountPaise + product.upsellSkus.reduce(
+              (sum, uSku) => sum + (getProduct(uSku)?.amountPaise ?? 0), 0,
+            );
+            const savings = Math.max(0, componentTotal - p!.amountPaise);
+            return {
+              sku: p!.sku,
+              title: p!.title,
+              price: `₹${(p!.amountPaise / 100).toLocaleString("en-IN")}`,
+              reason: savings > 0
+                ? `Bundle saves ₹${(savings / 100).toFixed(0)} vs buying separately`
+                : `Bundled package with ${p!.title}`,
+            };
+          });
 
         return ok(
           { primarySku: params.sku, upsells, crossSells },

@@ -25,7 +25,6 @@ interface CheckoutButtonProps {
   landingPageId?: string;
   campaignId?: string;
   ctaLabel?: string;
-  showPrice?: boolean;
   className?: string;
 }
 
@@ -34,7 +33,6 @@ export function CheckoutButton({
   landingPageId,
   campaignId,
   ctaLabel = "Pay now",
-  showPrice = true,
   className = "",
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -42,7 +40,6 @@ export function CheckoutButton({
     typeof globalThis.window !== "undefined" && !!globalThis.window.Razorpay,
   );
   const [error, setError] = useState<string | null>(null);
-  const [price, setPrice] = useState<{ amountPaise: number; currency: string } | null>(null);
 
   // Load Razorpay Checkout.js from CDN
   useEffect(() => {
@@ -86,7 +83,6 @@ export function CheckoutButton({
 
       // Demo mode: simulate success
       if (order.mode === "demo") {
-        setPrice({ amountPaise: order.amountPaise, currency: order.currency });
         window.location.href = `?order=${order.orderId}&demo=true&status=success`;
         return;
       }
@@ -138,11 +134,6 @@ export function CheckoutButton({
     }
   }, [sku, landingPageId, campaignId]);
 
-  const formatPrice = (paise: number, currency: string) => {
-    if (currency === "INR") return `₹${(paise / 100).toLocaleString("en-IN")}`;
-    return `${currency} ${(paise / 100).toFixed(2)}`;
-  };
-
   return (
     <div className="flex flex-col items-center gap-2">
       <button
@@ -155,7 +146,6 @@ export function CheckoutButton({
           <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
         ) : null}
         {ctaLabel}
-        {showPrice && price ? ` — ${formatPrice(price.amountPaise, price.currency)}` : ""}
       </button>
       {error ? (
         <p className="text-sm text-red-500">{error}</p>

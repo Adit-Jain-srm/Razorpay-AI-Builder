@@ -309,7 +309,7 @@ export function renderSection(section: LandingSection, ctx: RenderContext): Reac
                 Razorpay Checkout button (SKU: {section.sku}) — renders on the live page
               </div>
             ) : (
-              <CheckoutButton sku={section.sku} ctaLabel={section.ctaLabel} showPrice={section.showPrice} />
+              <CheckoutButton sku={section.sku} ctaLabel={section.ctaLabel} />
             )}
           </div>
         </section>

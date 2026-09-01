@@ -31,10 +31,10 @@ todos:
     status: completed
   - id: live-deploy
     content: "Phase 9: Vercel env + webhook + live test-card success and failure@razorpay; runbook; commit if needed; push"
-    status: in_progress
+    status: completed
   - id: pitch-submit
     content: "Phase 10: Pitch video assets, architecture, submission-draft, what-broke log; final gate; push; apply"
-    status: pending
+    status: completed
 isProject: false
 ---
 
