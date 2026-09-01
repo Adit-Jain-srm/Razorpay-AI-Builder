@@ -237,7 +237,77 @@ export function funnel(rows: readonly PerformanceMetricRow[]): FunnelStage[] {
       stage,
       value,
       stepRate: prev === null ? null : round(safeDiv(value, prev), 4),
-      overallRate: round(safeDiv(value, top), 6),
+      overallRate: round(safeDiv(value, top), 4),
+    };
+    prev = value;
+    return out;
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/* Extended funnel with Checkout → Paid (Wave 7 Track 01)                     */
+/* -------------------------------------------------------------------------- */
+
+/** Extended funnel stage — allows Track 01 stage names beyond the original set. */
+export interface ExtendedFunnelStage {
+  stage: string;
+  value: number;
+  stepRate: number | null;
+  overallRate: number;
+}
+
+/**
+ * Extended funnel: Impressions (simulated, labeled) → Clicks (simulated) →
+ * LP Views (real page_views when available) → Checkout Started → Paid → GMV.
+ *
+ * `checkoutStarted` and `paidOrders` come from the orders table (Phase 3+).
+ * When both are 0, the function falls back to the original modeled funnel.
+ */
+export function extendedFunnel(
+  rows: readonly PerformanceMetricRow[],
+  realMetrics?: {
+    lpViews?: number;
+    checkoutStarted?: number;
+    paidOrders?: number;
+    gmvPaise?: number;
+  },
+): ExtendedFunnelStage[] {
+  const s = summarize(rows);
+  const impressions = s.impressions;
+  const clicks = Math.min(s.clicks, impressions);
+  const lpViews = realMetrics?.lpViews ?? Math.min(Math.round(clicks * LP_VIEW_RATE), clicks);
+  const checkoutStarted = realMetrics?.checkoutStarted ?? 0;
+  const paidOrders = realMetrics?.paidOrders ?? 0;
+
+  const stages: Array<[string, number, boolean]> = [
+    ["Impressions (simulated)", impressions, false],
+    ["Clicks (simulated)", clicks, false],
+    ["LP Views", Math.min(lpViews, clicks), realMetrics?.lpViews !== undefined],
+  ];
+
+  if (checkoutStarted > 0 || paidOrders > 0) {
+    stages.push(
+      ["Checkout Started", Math.min(checkoutStarted, lpViews), true],
+      ["Paid", Math.min(paidOrders, checkoutStarted || lpViews), true],
+    );
+  } else {
+    // Fallback to modeled conversions (no Razorpay data yet)
+    const conversions = Math.min(s.conversions, lpViews);
+    const leads = Math.min(Math.max(Math.round(conversions / CONVERSION_OF_LEAD), conversions), lpViews);
+    stages.push(
+      ["Leads", leads, false],
+      ["Conversions (simulated)", conversions, false],
+    );
+  }
+
+  const top = impressions;
+  let prev: number | null = null;
+  return stages.map(([stage, value]) => {
+    const out: ExtendedFunnelStage = {
+      stage,
+      value,
+      stepRate: prev === null ? null : round(safeDiv(value, prev), 4),
+      overallRate: round(safeDiv(value, top), 4),
     };
     prev = value;
     return out;

@@ -19,10 +19,10 @@ todos:
     status: completed
   - id: upsell-orchestrator
     content: "Phase 5: Upsell graph + execute reallocate/scale/pause; INR objective; scorecard tests; commit; push"
-    status: in_progress
+    status: completed
   - id: audit-analytics-ui
     content: "Phase 6: Audit timeline UI + real Checkout→Paid funnel; analytics tests; commit; push"
-    status: pending
+    status: in_progress
   - id: operator-prompts-seed
     content: "Phase 7: Money tools, prompts, step budget 24, AarogyaFit seed, nav/README; demo-path tests; commit; push"
     status: pending
