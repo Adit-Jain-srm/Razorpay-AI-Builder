@@ -1,0 +1,87 @@
+---
+description: "Wave 7 Track 01 — sequential, production-grade, goal-aware, skill-driven"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Track 01 Execution Rules
+
+## 1. Sequential Only — No Parallel Subagents
+
+- Execute one phase at a time, in order (0 through 10).
+- Never launch parallel Task/subagent workers for implementation.
+- Waves 0–6 succeeded sequentially; Wave 7 does the same.
+- Exception: readonly research (web search, doc fetch) may parallel.
+
+## 2. Production-Grade — No Shortcuts
+
+- Every file matches the staff-engineer bar of Waves 0–6.
+- External calls: `withRetry`/`withTimeout`/`CircuitBreaker`/typed `AppError`.
+- Money: integer paise, never float.
+- Secrets: server-only, never client bundle, never git.
+- UI: zinc+emerald, Geist, Phosphor, reduced-motion safe.
+- Tools: Zod params, `runToolSafely`, fail-safe.
+- Tests: CI-safe, deterministic.
+- "It works" is not done. "Verified, tested, documented, pushed" is done.
+
+## 3. Goal Awareness — Every Change Serves Track 01
+
+- Before coding, re-read `.cursor/plans/track_01_upgrade_96eff3ff.plan.md`.
+- Every change must serve: campaign orchestrator, conversational checkout, agent-readable catalog, upsell/cross-sell, audit trail, or graceful failure.
+- Track 01 bar: every money action explainable, bounded, gated; audit trail; one failure handled.
+- Do not build Track 02–04 or live ad-network integrations.
+
+## 4. Use Skills Extensively
+
+Read `.cursor/skills/README.md` at session start.
+
+| Situation | Skill |
+|-----------|-------|
+| Any code change | self-review (silent, before presenting) |
+| Any "done" claim | prove-it (gate output, not assertion) |
+| New module / feature | grill first (resolve decisions) |
+| Bug / failure | diagnose (reproduce → hypothesise → fix) |
+| External API (Razorpay) | error-resilience (retry, circuit breaker) |
+| Schema / migration | db-schema (queries-first, index every filter) |
+| Git commit | git-workflow (atomic, conventional, push) |
+| Performance | web-perf (measure first) |
+| UI work | design-taste-frontend + ui-ux-pro-max |
+| Agent tools | Follow defineTool + runToolSafely pattern from ADR 0004 |
+| Long session (40+ calls) | session-guard (checkpoint, recite rules) |
+| Before building | research-first-execution (check prior art) |
+
+If a skill exists for the situation, READ its SKILL.md and FOLLOW it. Do not name-drop skills without invoking them.
+
+## 5. Per-Phase Delivery Loop (12 Steps — Never Skip)
+
+Every phase (0–10) runs this loop. No step is optional.
+
+1. Implement the phase scope (complete, not a sketch)
+2. Silent self-review (types, HMAC, RLS, no any, error paths, surrounding callers)
+3. Write unit/integration tests for happy path AND edge cases
+4. `npm run typecheck && npm run lint && npm test`
+5. If user-visible or public route: write/extend Playwright e2e; `npm run test:e2e`
+6. Update Docs (module page + api.md + progress.md + learnings if gotcha)
+7. `npm run build` (the real integration gate)
+8. `git status` / `git diff` — confirm no secrets, one logical change
+9. `git add`; conventional commit (`feat`/`fix`/`docs`/`test`/`refactor`/`chore`)
+10. `git status` — clean
+11. `git push origin HEAD`
+12. Record evidence in `Docs/progress.md` (gate numbers, push)
+
+If a gate fails: STOP, diagnose, fix, re-run full gate. Never push red.
+
+## 6. Forbidden
+
+- Do not launch subagents for implementation (readonly research only).
+- Do not skip tests because "it's just a small change."
+- Do not skip docs because "I'll do it later."
+- Do not skip git push because "I'll batch commits."
+- Do not use `any` as a type escape.
+- Do not swallow errors silently.
+- Do not put secrets in commits.
+- Do not claim done without prove-it evidence.
+- Do not modify frozen contracts (`errors.ts`, `resilience.ts`, `env.ts`, `agent/types.ts`, `research/standard-models.ts`) — extend via new files.
+- Do not rewrite `0001_init.sql` or `0002_storage.sql`.
+- Do not use float/number for money (integer paise only).
+- Do not trust client-supplied amounts (server-priced SKUs).

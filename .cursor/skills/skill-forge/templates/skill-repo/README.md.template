@@ -1,0 +1,47 @@
+# {{title}}
+
+{{hook}}
+
+## Install
+
+```bash
+npx skills add {{githubUser}}/{{name}}
+```
+
+## What This Solves
+
+{{painPoint}}
+
+## Before / After
+
+**Without this skill:**
+{{before}}
+
+**With this skill:**
+{{after}}
+
+## How It Works
+
+This skill teaches your AI agent to:
+{{capabilities}}
+
+## Why This Over Alternatives
+
+{{differentiator}}
+
+## Compatibility
+
+Works with any agent supporting the [SKILL.md standard](https://agentskills.io/specification):
+- Cursor
+- Claude Code  
+- GitHub Copilot (Codex CLI)
+- Windsurf
+- And 40+ others
+
+## See Also
+
+{{relatedSkills}}
+
+## License
+
+MIT

@@ -1,0 +1,22 @@
+{
+  "name": "skill-forge",
+  "version": "1.1.0",
+  "description": "Autonomous self-improving AI agent that discovers, learns from, creates, and publishes AI agent skills. 14 behavioral skills + meta-agent + CLI.",
+  "bin": {
+    "skill-forge": "./bin/skill-forge.js"
+  },
+  "scripts": {
+    "test": "node tests/run-tests.js",
+    "validate": "node bin/skill-forge.js validate",
+    "discover": "node bin/skill-forge.js discover",
+    "status": "node bin/skill-forge.js status"
+  },
+  "keywords": ["cursor-skill", "agent-skills", "ai-skill", "cursor", "ai-agent", "self-improving", "skill-discovery", "mcp", "claude-code"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Adit-Jain-srm/skill-forge"
+  },
+  "author": "Adit-Jain-srm",
+  "license": "MIT",
+  "files": ["SKILL.md", "skills/", "scripts/", "bin/", "templates/", "docs/", "evals/", "README.md", "CONTEXT.md", "AGENTS.md", "CLAUDE.md"]
+}

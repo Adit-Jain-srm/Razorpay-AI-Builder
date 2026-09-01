@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#09090b"/>
+  <text x="600" y="295" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="700" fill="#fafafa" letter-spacing="-2">MediaOS</text>
+  <rect x="540" y="330" width="120" height="4" rx="2" fill="#10b981"/>
+  <text x="600" y="380" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#a1a1aa">AI Media Buying, Automated</text>
+</svg>

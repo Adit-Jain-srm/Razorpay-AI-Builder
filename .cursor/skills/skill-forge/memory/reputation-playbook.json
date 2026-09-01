@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-06-04T02:50:00+05:30",
+  "playbook": {
+    "readme_patterns": [
+      "Lead with ONE sentence value prop (addyosmani: 'Production-grade engineering skills for AI coding agents')",
+      "Hero image/banner immediately after title (visual credibility)",
+      "Table of slash commands / capabilities (instant clarity on what you get)",
+      "Multi-platform install instructions in collapsible details (Cursor, Claude, Gemini, Codex)",
+      "Quick Start is FIRST actionable section (not buried)",
+      "Badge row for credibility (PyPI, license, Python version) — Microsoft pattern",
+      "News/updates section shows active maintenance (SkillOpt pattern)"
+    ],
+    "description_patterns": [
+      "Start with what it IS, not what it does: 'Production-grade engineering skills' > 'A tool that helps you...'",
+      "Include numbers: '150+ Skills', '259+ Skills', '1500+ skills', '90+ modules'",
+      "Name the platforms: 'for Claude Code, Cursor, Codex, Gemini CLI'",
+      "Use power words: 'production-grade', 'autonomous', 'world-class', 'specialized'",
+      "Include the install method in description if short enough"
+    ],
+    "naming_patterns": [
+      "Descriptive compound: 'agent-skills', 'awesome-claude-skills', 'scientific-agent-skills'",
+      "Brand + function: 'claude-red', 'planning-with-files', 'design-md-chrome'",
+      "Avoid generic: NOT 'my-skills' or 'cool-tools'",
+      "Keyword-rich for search: include 'skill', 'agent', 'cursor', 'claude' in name when relevant"
+    ],
+    "structure_patterns": [
+      "Multi-skill repos (collections) get MORE stars than single skills",
+      "Awesome-list format (curated collections) dominates the 10K+ star tier",
+      "Single-purpose deep skills (SkillOpt, planning-with-files) can hit 1-5K with novel approach",
+      "Cross-platform compatibility (works in Cursor AND Claude AND Codex) multiplies reach",
+      "Having a project page / demo video / paper adds massive credibility (SkillOpt pattern)"
+    ],
+    "marketing_patterns": [
+      "Security/offensive skills get VERY high stars (raptor: 2.8K, Claude-Red: 1.9K, Claude-OSINT: 1.6K)",
+      "Science/domain-specific with clear authority gets stars (K-Dense-AI: 27K)",
+      "Meta-skills (skill creators, skill optimizers) get high engagement (FrancyJGLisboa: 1.3K, microsoft/SkillOpt: 4.6K)",
+      "Aggregators/awesome-lists are the highest-star category (49K-146K) but require massive curation effort",
+      "Niche but DEEP > broad but shallow for single-skill repos"
+    ],
+    "top_repos_analyzed": [
+      {"name": "addyosmani/agent-skills", "stars": 48030, "key_insight": "Lifecycle-mapped slash commands + production framing. 'Senior engineers use these' creates authority."},
+      {"name": "microsoft/SkillOpt", "stars": 4661, "key_insight": "Treats skill.md as TRAINABLE STATE. Paper-backed. pip installable. The meta-skill approach (improving skills themselves) is novel and high-value."},
+      {"name": "anthropics/skills", "stars": 146082, "key_insight": "Official platform repo. Being 'the canonical source' is the ultimate moat."},
+      {"name": "K-Dense-AI/scientific-agent-skills", "stars": 27115, "key_insight": "Deep domain expertise + large number (140 skills, 100+ databases). Authority in a niche beats generic breadth."}
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "description": "Track skill invocations for RL feedback",
+      "enabled": true,
+      "script": "scripts/track-invocation.ps1"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-06-04T02:52:00+05:30",
+  "total_cycles": 1,
+  "epsilon": 0.25,
+  "source_weights": {
+    "github_topics": { "weight": 0.8, "hits": 3, "novel_finds": 45 },
+    "github_trending": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "skills_sh": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "lobehub": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "exa_mcp": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "bright_data": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "npx_skills_find": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "cursor_directory": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "web_search": { "weight": 0.5, "hits": 0, "novel_finds": 0 },
+    "trail_following": { "weight": 0.5, "hits": 0, "novel_finds": 0 }
+  },
+  "category_weights": {
+    "ai_agents": { "weight": 0.5, "created": 0, "stars": 0 },
+    "devops": { "weight": 0.5, "created": 0, "stars": 0 },
+    "testing": { "weight": 0.5, "created": 0, "stars": 0 },
+    "design_ui": { "weight": 0.6, "created": 0, "stars": 0 },
+    "data_processing": { "weight": 0.5, "created": 0, "stars": 0 },
+    "security": { "weight": 0.7, "created": 0, "stars": 0 },
+    "automation": { "weight": 0.6, "created": 0, "stars": 0 },
+    "integration": { "weight": 0.7, "created": 0, "stars": 0 },
+    "documentation": { "weight": 0.5, "created": 0, "stars": 0 },
+    "performance": { "weight": 0.6, "created": 0, "stars": 0 },
+    "meta_skills": { "weight": 0.8, "created": 0, "stars": 0 }
+  },
+  "creation_success": {
+    "total_published": 0,
+    "total_stars": 0,
+    "avg_time_to_first_star_hours": null,
+    "avg_star_velocity_per_week": 0,
+    "best_performing": null,
+    "worst_performing": null
+  },
+  "routing_accuracy": {
+    "total_routes": 0,
+    "successful_routes": 0,
+    "accuracy": 0.0
+  },
+  "quality_indicators": {
+    "readme_sells": { "weight": 0.7, "signal_count": 0 },
+    "under_500_lines": { "weight": 0.6, "signal_count": 0 },
+    "has_scripts": { "weight": 0.5, "signal_count": 0 },
+    "compelling_description": { "weight": 0.8, "signal_count": 0 },
+    "solves_specific_pain": { "weight": 0.9, "signal_count": 0 }
+  },
+  "reputation_metrics": {
+    "total_repos": 0,
+    "total_stars": 0,
+    "total_forks": 0,
+    "total_issues": 0,
+    "star_velocity_per_week": 0
+  },
+  "learnings": [
+    "[2026-06-04] source_novel from github_topics: 45 novel skills found in first sweep",
+    "[2026-06-04] Reputation pattern: lifecycle slash commands + numbers in description + multi-platform install",
+    "[2026-06-04] SkillOpt training loop: rollout→reflect→aggregate→select→update→evaluate",
+    "[2026-06-04] Security skills get 1K-3K stars with low competition",
+    "[2026-06-04] Meta-skills (skills about skills) are a growing novel category",
+    "[2026-06-04] Domain authority (deep in one niche) beats broad shallow coverage"
+  ]
+}

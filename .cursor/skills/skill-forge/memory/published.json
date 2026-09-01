@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2026-06-04T03:55:00+05:30",
+  "total_published": 1,
+  "repos": [
+    {
+      "full_name": "Adit-Jain-srm/skill-forge",
+      "name": "skill-forge",
+      "description": "Self-improving meta-agent + 9 compound skills. Discovers, devours, creates.",
+      "url": "https://github.com/Adit-Jain-srm/skill-forge",
+      "category": "meta_skills",
+      "published_at": "2026-06-04T02:55:00+05:30",
+      "version": "1.0.0",
+      "skills_count": 9,
+      "stars": 0,
+      "forks": 0,
+      "open_issues": 0,
+      "last_checked": "2026-06-04T03:55:00+05:30"
+    }
+  ],
+  "deleted_repos": [
+    {"name": "mcp-conductor", "reason": "Moved into collection. Single-file repos don't get stars."},
+    {"name": "web-perf-skill", "reason": "Moved into collection. Single-file repos don't get stars."},
+    {"name": "git-workflow-skill", "reason": "Moved into collection. Single-file repos don't get stars."},
+    {"name": "db-schema-skill", "reason": "Moved into collection. Single-file repos don't get stars."}
+  ]
+}

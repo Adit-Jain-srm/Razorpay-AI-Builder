@@ -1,0 +1,18 @@
+# The OpenBB reference repo (1000+ Python files) must never be uploaded to Vercel.
+Reference-repo/
+
+# Local docs and planning material are not needed in the deployment.
+Docs/
+
+# Scripts are dev-only (smoke tests, seeders).
+scripts/
+
+# Cursor IDE config and skills are not runtime dependencies.
+.cursor/
+
+# Supabase migrations and config (top-level only) are applied separately.
+/supabase/
+
+# Markdown files (except README.md which Vercel uses for project info).
+*.md
+!README.md

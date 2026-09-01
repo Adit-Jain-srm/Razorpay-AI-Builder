@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-06-04T02:52:00+05:30",
+  "total_gaps": 5,
+  "gaps": [
+    {
+      "id": "gap-001",
+      "category": "meta_skills",
+      "title": "Autonomous skill discovery and installation",
+      "description": "No skill exists that autonomously discovers, evaluates, and installs new skills. FrancyJGLisboa/agent-skill-creator (1.3K stars) creates skills but doesn't DISCOVER them. skill-forge fills this but isn't published yet.",
+      "severity": "high",
+      "competition": "low",
+      "estimated_stars": "200-500",
+      "status": "being_built"
+    },
+    {
+      "id": "gap-002",
+      "category": "automation",
+      "title": "Git workflow automation skill (beyond commits)",
+      "description": "Most skills help with code. Few handle the full git workflow: smart branching strategies, PR description generation, changelog automation, release management, monorepo navigation. addyosmani has /ship but it's one phase of many.",
+      "severity": "medium",
+      "competition": "medium",
+      "estimated_stars": "100-300",
+      "status": "identified"
+    },
+    {
+      "id": "gap-003",
+      "category": "performance",
+      "title": "Web performance optimization skill",
+      "description": "No dedicated skill for Core Web Vitals optimization, bundle analysis, lazy loading strategies, image optimization, caching. Developers struggle with this constantly. High search volume for 'improve LCP' etc.",
+      "severity": "high",
+      "competition": "very_low",
+      "estimated_stars": "300-800",
+      "status": "identified"
+    },
+    {
+      "id": "gap-004",
+      "category": "integration",
+      "title": "Multi-MCP orchestration skill",
+      "description": "Users have 10+ MCP servers but no skill teaching agents HOW to orchestrate them for complex tasks. E.g., 'use Exa to research, Bright Data to scrape, then synthesize'. The MCP ecosystem needs a conductor skill.",
+      "severity": "high",
+      "competition": "zero",
+      "estimated_stars": "500-1000",
+      "status": "identified"
+    },
+    {
+      "id": "gap-005",
+      "category": "data_processing",
+      "title": "Database schema design and migration skill",
+      "description": "Agents make poor schema decisions without guidance. No skill teaches: normalization trade-offs, indexing strategy, migration safety, multi-tenant patterns, query optimization. prisma/drizzle docs exist but no SKILL.md packages this knowledge.",
+      "severity": "medium",
+      "competition": "low",
+      "estimated_stars": "200-400",
+      "status": "identified"
+    }
+  ],
+  "anti_laziness_findings": [
+    "addyosmani/agent-skills has NO discovery mechanism — it's static, you have to know it exists",
+    "microsoft/SkillOpt requires Python and training data — no zero-config mode for casual users",
+    "FrancyJGLisboa/agent-skill-creator creates skills but doesn't learn from existing ones or improve over time",
+    "ALL existing meta-skills are one-shot — none have a persistent memory or RL system",
+    "No skill combines MCP discovery + skill creation + publishing in one pipeline",
+    "Security skills (raptor, Claude-Red) are powerful but have ZERO self-improvement — they're static knowledge",
+    "awesome-lists are maintained manually — no one has automated curation with quality scoring"
+  ]
+}

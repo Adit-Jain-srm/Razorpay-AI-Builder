@@ -1,0 +1,13 @@
+{
+  "name": "{{npmName}}",
+  "version": "1.0.0",
+  "description": "{{description}}",
+  "keywords": ["cursor-skill", "agent-skills", "ai-skill", "cursor", "ai-agent", "{{category}}"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/{{githubUser}}/{{name}}"
+  },
+  "author": "{{githubUser}}",
+  "license": "MIT",
+  "files": ["SKILL.md", "reference.md", "scripts/", "README.md"]
+}

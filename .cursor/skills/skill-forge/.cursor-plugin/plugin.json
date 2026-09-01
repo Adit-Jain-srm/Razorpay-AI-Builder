@@ -1,0 +1,25 @@
+{
+  "name": "skill-forge",
+  "displayName": "skill-forge",
+  "description": "Self-improving meta-agent: discovers, devours, and creates AI agent skills. 7 compound skills + autonomous discovery engine.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Adit Jain",
+    "email": "aditjain2005@gmail.com"
+  },
+  "homepage": "https://github.com/Adit-Jain-srm/skill-forge",
+  "repository": "https://github.com/Adit-Jain-srm/skill-forge",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "meta-agent",
+    "self-improving",
+    "discovery",
+    "mcp",
+    "orchestration",
+    "web-performance",
+    "architecture"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/"
+}

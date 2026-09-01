@@ -1,0 +1,34 @@
+---
+name: {{name}}
+description: >-
+  {{description}}
+---
+
+# {{title}}
+
+{{purpose}}
+
+## Quick Start
+
+{{quickstart}}
+
+## When to Use
+
+Use this skill when:
+{{triggers}}
+
+## Workflow
+
+{{workflow}}
+
+## Examples
+
+{{examples}}
+
+## Common Mistakes
+
+{{mistakes}}
+
+## Additional Resources
+
+{{resources}}

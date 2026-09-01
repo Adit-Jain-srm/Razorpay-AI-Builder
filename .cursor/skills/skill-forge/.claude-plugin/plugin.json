@@ -1,0 +1,21 @@
+{
+  "name": "skill-forge",
+  "description": "Self-improving meta-agent for Claude Code: discovers, devours, and creates AI agent skills. 7 compound skills + autonomous discovery engine.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Adit Jain",
+    "email": "aditjain2005@gmail.com"
+  },
+  "homepage": "https://github.com/Adit-Jain-srm/skill-forge",
+  "repository": "https://github.com/Adit-Jain-srm/skill-forge",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "meta-agent",
+    "self-improving",
+    "discovery",
+    "mcp-orchestration",
+    "architecture",
+    "web-performance"
+  ]
+}
