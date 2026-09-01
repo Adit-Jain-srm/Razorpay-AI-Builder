@@ -22,7 +22,7 @@ todos:
     status: completed
   - id: audit-analytics-ui
     content: "Phase 6: Audit timeline UI + real Checkout→Paid funnel; analytics tests; commit; push"
-    status: in_progress
+    status: completed
   - id: operator-prompts-seed
     content: "Phase 7: Money tools, prompts, step budget 24, AarogyaFit seed, nav/README; demo-path tests; commit; push"
     status: pending

@@ -119,7 +119,7 @@ export function computeReallocation(
       newPercent: toAlloc.percent + shift,
     },
     shiftPercent: shift,
-    reason: `Shifting ${shift}% from audience ${fromAlloc.personaId} (CPA ₹${((worstMetrics?.cpaPaise ?? 0) / 100).toFixed(0)}) to ${toAlloc.personaId} (CPA ₹${((bestMetrics?.cpaPaise ?? 0) / 100).toFixed(0)}) — ${((bestMetrics?.cpaPaise ?? 1) / (worstMetrics?.cpaPaise ?? 1) * 100).toFixed(0)}% lower CPA`,
+    reason: `Shifting ${shift}% from audience ${fromAlloc.personaId} (CPA ₹${((worstMetrics?.cpaPaise ?? 0) / 100).toFixed(0)}) to ${toAlloc.personaId} (CPA ₹${((bestMetrics?.cpaPaise ?? 0) / 100).toFixed(0)}) based on observed performance`,
   };
 }
 

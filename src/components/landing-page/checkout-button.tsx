@@ -78,6 +78,7 @@ export function CheckoutButton({
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Order creation failed" }));
         setError(data.error ?? "Order creation failed");
+        setLoading(false);
         return;
       }
 
@@ -93,6 +94,7 @@ export function CheckoutButton({
       // Step 2: Open Razorpay Checkout
       if (!window.Razorpay) {
         setError("Payment system not ready. Please refresh.");
+        setLoading(false);
         return;
       }
 
@@ -132,7 +134,6 @@ export function CheckoutButton({
       rzp.open();
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   }, [sku, landingPageId, campaignId]);

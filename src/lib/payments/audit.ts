@@ -35,7 +35,7 @@ export function writeAudit(entry: AuditEntry, _userId = "demo"): AuditRecord {
 
 /** Read the audit timeline for a campaign, newest first. */
 export function getAuditTimeline(campaignId: string, limit = 100): AuditRecord[] {
-  return auditStore
+  return [...auditStore]
     .filter((r) => r.campaignId === campaignId)
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
     .slice(0, limit);
@@ -43,7 +43,7 @@ export function getAuditTimeline(campaignId: string, limit = 100): AuditRecord[]
 
 /** Read the full audit log (no campaign filter), newest first. */
 export function getFullAuditLog(limit = 200): AuditRecord[] {
-  return auditStore
+  return [...auditStore]
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
     .slice(0, limit);
 }

@@ -15,6 +15,7 @@ import { z } from "zod";
 import { isRazorpayConfigured } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
+import { getProduct } from "@/lib/payments/products";
 
 export const runtime = "nodejs";
 
@@ -38,13 +39,6 @@ interface SessionData {
   razorpayOrderId: string | null;
   createdAt: string;
 }
-
-/** Demo product catalog (shared with /api/checkout/orders). */
-const PRODUCTS: Record<string, { title: string; amountPaise: number; currency: string }> = {
-  "AAROGYA-12W": { title: "AarogyaFit 12-week training program", amountPaise: 149_900, currency: "INR" },
-  "AAROGYA-NUTR": { title: "Nutrition add-on guide", amountPaise: 49_900, currency: "INR" },
-  "AAROGYA-BUNDLE": { title: "Program + nutrition bundle", amountPaise: 179_900, currency: "INR" },
-};
 
 const createSessionSchema = z.object({
   items: z.array(z.object({
@@ -70,7 +64,7 @@ export async function POST(request: Request) {
     let totalPaise = 0;
 
     for (const item of parsed.data.items) {
-      const product = PRODUCTS[item.id];
+      const product = getProduct(item.id);
       if (!product) {
         return NextResponse.json({ error: `Unknown product: ${item.id}` }, { status: 404 });
       }

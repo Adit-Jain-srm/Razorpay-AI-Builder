@@ -13,6 +13,7 @@ import { z } from "zod";
 import { getEnv, isRazorpayConfigured } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
+import { getProduct } from "@/lib/payments/products";
 
 export const runtime = "nodejs";
 
@@ -24,16 +25,6 @@ const orderRequestSchema = z.object({
   utm: z.record(z.string(), z.string()).default({}),
   idempotencyKey: z.string().min(8).max(128).optional(),
 });
-
-/**
- * Demo product catalog (in-memory, server-only).
- * Used when Supabase is not configured. Matches the AarogyaFit SKU set.
- */
-const DEMO_PRODUCTS: Record<string, { title: string; amountPaise: number; currency: string }> = {
-  "AAROGYA-12W": { title: "AarogyaFit 12-week training program", amountPaise: 149_900, currency: "INR" },
-  "AAROGYA-NUTR": { title: "Nutrition add-on guide", amountPaise: 49_900, currency: "INR" },
-  "AAROGYA-BUNDLE": { title: "Program + nutrition bundle", amountPaise: 179_900, currency: "INR" },
-};
 
 export async function POST(request: Request) {
   try {
@@ -50,7 +41,7 @@ export async function POST(request: Request) {
     const { sku, landingPageId, campaignId, upsellSkus } = parsed.data;
 
     // Server-priced: resolve product from catalog, never trust client amount
-    const product = DEMO_PRODUCTS[sku];
+    const product = getProduct(sku);
     if (!product) {
       return NextResponse.json({ error: `Unknown SKU: ${sku}` }, { status: 404 });
     }
@@ -62,7 +53,7 @@ export async function POST(request: Request) {
     ];
 
     for (const upsellSku of upsellSkus) {
-      const upsell = DEMO_PRODUCTS[upsellSku];
+      const upsell = getProduct(upsellSku);
       if (!upsell) {
         return NextResponse.json({ error: `Unknown upsell SKU: ${upsellSku}` }, { status: 404 });
       }
