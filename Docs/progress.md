@@ -465,3 +465,12 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   `errors.ts`: service `razorpay`, codes `POLICY_DENIED`/`SIGNATURE_INVALID`/`PAYMENT_FAILED`.
   `database.ts`: type aliases + Database entries for all 7 tables. 6 new env tests. Gate: `tsc` (0),
   `lint` (0), `npm test` (**425 passing**, 46 files), `npm run build` (success). Committed and pushed.
+- **2026-09-02** — Phase 2: Payments core. `src/lib/payments/` with 6 modules: `types.ts` (domain
+  types — OrderStatus, MandateInput, AuditEntry, PolicyDecision, ProductInfo, WebhookEvent),
+  `policy.ts` (8 deterministic checks: currency/amount/budget/reason/remaining/stop-rule/rate +
+  composable `checkAll`), `hmac.ts` (dual HMAC — checkout KEY_SECRET over `order_id|payment_id`,
+  webhook WEBHOOK_SECRET over raw body, both with `timingSafeEqual`), `razorpay.ts` (fetch + Basic
+  auth, `withRetry`/`withTimeout`, typed `AppError`), `index.ts` (client-safe barrel). 38 new tests
+  covering: valid/wrong-secret/tamper/empty/buffer/raw-body-trap for HMAC; currency/amount-cap/
+  float-reject/budget/reason-length/remaining/stop-rule/rate/compose for policy. Gate: `tsc` (0),
+  `lint` (0), `npm test` (**463 passing**, 48 files), `npm run build` (success). Committed and pushed.
