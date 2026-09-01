@@ -456,5 +456,12 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   (always-apply, sequential, production-grade, goal-aware, skill-driven). Created `Docs/buildathon/`
   (8 files: README, hackathon-brief, track-01-bar, gap-analysis, product-reframe, upgrade-spec,
   protocols, submission-draft). Added ADR 0005 (Proposed). Added stub `Docs/payments.md`. Added this
-  Wave 7 section to progress.md. Gate: `tsc` (0), `lint` (0), `npm test` (**419 passing**, 46 files),
+  Wave 7 section to progress.md.   Gate: `tsc` (0), `lint` (0), `npm test` (**419 passing**, 46 files),
   `npm run build` (success). Committed and pushed to `origin/main`.
+- **2026-09-02** — Phase 1: Schema + env + error taxonomy. Migration
+  `0003_razorpay_money_loop.sql` (7 tables: products, mandates, orders, order_items, payments,
+  audit_events, webhook_receipts — bigint paise, RLS, indexes). `env.ts`: 3 Razorpay keys +
+  `isRazorpayConfigured()` + `isRazorpayWebhookConfigured()` + `getServiceConfigStatus().razorpay`.
+  `errors.ts`: service `razorpay`, codes `POLICY_DENIED`/`SIGNATURE_INVALID`/`PAYMENT_FAILED`.
+  `database.ts`: type aliases + Database entries for all 7 tables. 6 new env tests. Gate: `tsc` (0),
+  `lint` (0), `npm test` (**425 passing**, 46 files), `npm run build` (success). Committed and pushed.
