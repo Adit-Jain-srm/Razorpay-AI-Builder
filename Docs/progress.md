@@ -456,4 +456,5 @@ File-claim map, schema, API routes, policy engine, tool catalog, and failure mat
   (always-apply, sequential, production-grade, goal-aware, skill-driven). Created `Docs/buildathon/`
   (8 files: README, hackathon-brief, track-01-bar, gap-analysis, product-reframe, upgrade-spec,
   protocols, submission-draft). Added ADR 0005 (Proposed). Added stub `Docs/payments.md`. Added this
-  Wave 7 section to progress.md. Gate: pending.
+  Wave 7 section to progress.md. Gate: `tsc` (0), `lint` (0), `npm test` (**419 passing**, 46 files),
+  `npm run build` (success). Committed and pushed to `origin/main`.
