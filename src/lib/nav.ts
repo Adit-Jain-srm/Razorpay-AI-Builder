@@ -23,11 +23,11 @@ export interface NavRoute {
  */
 export const NAV_ROUTES: NavRoute[] = [
   { href: "/", label: "Command Center", description: "Your campaigns, live performance, and the agent's daily brief", icon: Gauge },
-  { href: "/operator", label: "Operator", description: "Hire the AI media buyer to plan and execute end to end", icon: Robot },
+  { href: "/operator", label: "Operator", description: "Hire the AI growth agent to plan, execute, and optimize end to end", icon: Robot },
   { href: "/research", label: "Research", description: "Audience research intelligence from live web data", icon: Binoculars },
   { href: "/campaigns", label: "Campaigns", description: "Briefs, budgets, and the lifecycle of every campaign", icon: Megaphone },
   { href: "/creatives", label: "Creatives", description: "Platform-ready ad copy and visuals", icon: ImagesSquare },
-  { href: "/landing-pages", label: "Landing Pages", description: "Generate, deploy, and capture leads", icon: Browsers },
+  { href: "/landing-pages", label: "Landing Pages", description: "Generate, deploy, and collect Razorpay checkout revenue", icon: Browsers },
   { href: "/analytics", label: "Analytics", description: "Cross-platform performance and AI insights", icon: ChartLineUp },
 ];
 

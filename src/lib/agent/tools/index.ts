@@ -5,6 +5,7 @@ import { createAnalyticsTools } from "./analytics.tools";
 import { createCampaignTools } from "./campaign.tools";
 import { createCreativeTools } from "./creative.tools";
 import { createLandingTools } from "./landing.tools";
+import { createPaymentTools, createCommerceTools } from "./payments.tools";
 import { createResearchTools } from "./research.tools";
 
 /**
@@ -32,6 +33,8 @@ export function createModuleTools(): AgentTool[] {
     ...createCreativeTools(),
     ...createLandingTools(),
     ...createAnalyticsTools(),
+    ...createPaymentTools(),
+    ...createCommerceTools(),
   ];
 }
 

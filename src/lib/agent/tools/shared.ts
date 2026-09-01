@@ -20,6 +20,8 @@ export const MODULE_TOOL_CATEGORY = {
   creative: "creative",
   landing: "landing",
   analytics: "analytics",
+  payments: "payments",
+  commerce: "commerce",
 } as const;
 
 export type ModuleToolCategory = (typeof MODULE_TOOL_CATEGORY)[keyof typeof MODULE_TOOL_CATEGORY];

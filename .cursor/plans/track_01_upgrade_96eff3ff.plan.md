@@ -25,7 +25,7 @@ todos:
     status: completed
   - id: operator-prompts-seed
     content: "Phase 7: Money tools, prompts, step budget 24, AarogyaFit seed, nav/README; demo-path tests; commit; push"
-    status: pending
+    status: in_progress
   - id: e2e-validation
     content: "Phase 8: Full Playwright golden path + failure matrix + smoke-razorpay; prove-it gate; commit; push"
     status: pending

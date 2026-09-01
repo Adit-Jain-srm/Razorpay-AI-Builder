@@ -39,6 +39,30 @@ export const DEMO_LANDING_IDS = {
 /** The public slug where the demo landing page is deployed. */
 export const DEMO_LANDING_SLUG = "retirement-income-weekly";
 
+/* -------------------------------------------------------------------------- */
+/* Wave 7: AarogyaFit (Track 01 canonical demo merchant)                     */
+/* -------------------------------------------------------------------------- */
+
+/** The Track 01 demo campaign (AarogyaFit, INR). */
+export const DEMO_TRACK01_CAMPAIGN_ID = "00000000-0000-4000-8000-000000000010";
+export const DEMO_TRACK01_CAMPAIGN_NAME = "AarogyaFit Growth Campaign";
+export const DEMO_TRACK01_LANDING_SLUG = "aarogya-fit";
+
+/** AarogyaFit product SKUs (must match src/lib/payments/products.ts). */
+export const DEMO_TRACK01_SKUS = {
+  PROGRAM: "AAROGYA-12W",
+  NUTRITION: "AAROGYA-NUTR",
+  BUNDLE: "AAROGYA-BUNDLE",
+} as const;
+
+/** Pain points for the AarogyaFit audience. */
+export const DEMO_TRACK01_PAIN_POINTS = [
+  "Inconsistent workout routines that never stick past week 3",
+  "Confusion about nutrition — too many conflicting diets online",
+  "Gym intimidation and not knowing where to start",
+  "Spending on supplements without understanding if they work",
+] as const;
+
 /** Pain points used across research, creatives, and landing copy. */
 export const DEMO_PAIN_POINTS = [
   "Inflation eroding savings before retirement",

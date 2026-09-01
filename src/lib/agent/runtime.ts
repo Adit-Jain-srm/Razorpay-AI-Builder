@@ -58,7 +58,7 @@ import type {
  * generous (vs. the original demo's 6) so a long autonomous chain isn't cut off
  * mid-run; the planner still keeps plans short.
  */
-const DEFAULT_MAX_STEPS = 16;
+const DEFAULT_MAX_STEPS = 24;
 
 const DEMO_SUMMARY =
   "I drafted a plan and ran the available built-in tools to prove the loop end to end. " +
