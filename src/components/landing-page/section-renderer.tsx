@@ -18,6 +18,7 @@ import type {
 
 import { AnchorButton, CountdownTimer, FaqAccordion, QuizFunnel } from "./interactive";
 import { LeadForm } from "./lead-form";
+import { CheckoutButton } from "./checkout-button";
 
 /**
  * The shared landing-page section renderer. Static sections are server-rendered
@@ -297,6 +298,22 @@ export function renderSection(section: LandingSection, ctx: RenderContext): Reac
       );
     case "cta":
       return <Cta section={section} />;
+    case "checkout":
+      return (
+        <section id="pay" className="scroll-mt-6 px-5 py-10">
+          <div className="mx-auto max-w-md rounded-[var(--lp-radius)] border border-[var(--lp-border)] bg-[var(--lp-subtle)] p-6 text-center">
+            {section.headline ? <h2 className="mb-2 text-xl font-bold text-[var(--lp-fg)]">{section.headline}</h2> : null}
+            {section.subtitle ? <p className="mb-4 text-sm text-[var(--lp-muted)]">{section.subtitle}</p> : null}
+            {ctx.mode === "editor" ? (
+              <div className="rounded bg-emerald-900/20 px-4 py-3 text-sm text-emerald-300">
+                Razorpay Checkout button (SKU: {section.sku}) — renders on the live page
+              </div>
+            ) : (
+              <CheckoutButton sku={section.sku} ctaLabel={section.ctaLabel} showPrice={section.showPrice} />
+            )}
+          </div>
+        </section>
+      );
     case "compliance":
       return <Compliance section={section} />;
     case "exit_intent":

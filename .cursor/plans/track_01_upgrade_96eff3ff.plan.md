@@ -10,10 +10,10 @@ todos:
     status: completed
   - id: payments-core
     content: "Phase 2: Razorpay client + policy + HMAC + demo store; edge-case unit tests; Docs/payments.md; commit; push"
-    status: in_progress
+    status: completed
   - id: checkout-surfaces
     content: "Phase 3: LP checkout + thanks/failed + orders/verify/webhook; e2e mocked pay/fail; commit; push"
-    status: pending
+    status: in_progress
   - id: agentic-commerce
     content: "Phase 4: Catalog + sessions + conversational checkout + llms.txt; catalog e2e; commit; push"
     status: pending

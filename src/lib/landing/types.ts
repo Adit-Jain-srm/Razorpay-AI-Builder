@@ -64,6 +64,7 @@ export const SECTION_TYPES = [
   "lead_form",
   "exit_intent",
   "cta",
+  "checkout",
   "compliance",
 ] as const;
 export const sectionTypeSchema = z.enum(SECTION_TYPES);
@@ -246,6 +247,25 @@ export const ctaSectionSchema = z.object({
 });
 export type CtaSection = z.infer<typeof ctaSectionSchema>;
 
+export const checkoutSectionSchema = z.object({
+  ...sectionMeta,
+  type: z.literal("checkout"),
+  headline: z.string().default("Complete your order"),
+  subtitle: z.string().default("Secure payment powered by Razorpay"),
+  /** Product SKU to purchase (resolved server-side for pricing). */
+  sku: z.string().min(1),
+  ctaLabel: z.string().default("Pay now"),
+  /** Show upsell/cross-sell options alongside the main product. */
+  showUpsells: z.boolean().default(false),
+  /** Redirect path after successful payment (relative to /lp/[slug]/). */
+  successPath: z.string().default("thanks"),
+  /** Redirect path after failed payment. */
+  failurePath: z.string().default("failed"),
+  /** Display the price on the button. */
+  showPrice: z.boolean().default(true),
+});
+export type CheckoutSection = z.infer<typeof checkoutSectionSchema>;
+
 export const complianceSectionSchema = z.object({
   ...sectionMeta,
   type: z.literal("compliance"),
@@ -267,6 +287,7 @@ export const landingSectionSchema = z.discriminatedUnion("type", [
   leadFormSectionSchema,
   exitIntentSectionSchema,
   ctaSectionSchema,
+  checkoutSectionSchema,
   complianceSectionSchema,
 ]);
 export type LandingSection = z.infer<typeof landingSectionSchema>;
