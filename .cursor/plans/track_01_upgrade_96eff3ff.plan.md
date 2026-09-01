@@ -13,10 +13,10 @@ todos:
     status: completed
   - id: checkout-surfaces
     content: "Phase 3: LP checkout + thanks/failed + orders/verify/webhook; e2e mocked pay/fail; commit; push"
-    status: in_progress
+    status: completed
   - id: agentic-commerce
     content: "Phase 4: Catalog + sessions + conversational checkout + llms.txt; catalog e2e; commit; push"
-    status: pending
+    status: in_progress
   - id: upsell-orchestrator
     content: "Phase 5: Upsell graph + execute reallocate/scale/pause; INR objective; scorecard tests; commit; push"
     status: pending

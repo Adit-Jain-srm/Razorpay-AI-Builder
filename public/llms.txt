@@ -1,0 +1,33 @@
+# MediaOS Agent Commerce
+
+> An AI-native Indian merchant's product catalog and checkout system.
+
+## Catalog
+
+Fetch the product catalog at `/api/commerce/catalog` for agent-readable product data
+including pricing (INR paise), availability, upsell/cross-sell graph, and checkout endpoints.
+
+## Checkout
+
+Create a checkout session at `/api/commerce/checkout/sessions` with a JSON body:
+
+```json
+{
+  "items": [{ "id": "AAROGYA-12W", "quantity": 1 }]
+}
+```
+
+The response includes a `razorpay_order_id` for Razorpay Standard Checkout and a
+`checkout_url` for human buyers.
+
+## Products
+
+| SKU | Product | Price (INR) |
+|-----|---------|-------------|
+| AAROGYA-12W | AarogyaFit 12-week training program | ₹1,499 |
+| AAROGYA-NUTR | Nutrition add-on guide | ₹499 |
+| AAROGYA-BUNDLE | Program + nutrition bundle | ₹1,799 |
+
+## Payment
+
+All payments use Razorpay Test Mode. No real money moves.
