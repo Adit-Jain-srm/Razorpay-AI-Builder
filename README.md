@@ -29,7 +29,7 @@
 
 ```mermaid
 flowchart TB
-    subgraph operator [The Operator — 22 Typed Tools]
+    subgraph operator [The Operator — 25 Module Tools + 3 Built-in]
         Plan["Plan (decompose goal)"]
         Execute["Execute (stream + observe)"]
         Policy["Policy Engine (deterministic)"]
@@ -129,7 +129,7 @@ flowchart TB
 |----------|--------------|
 | **[Architecture](Docs/architecture.md)** | System diagrams, data model (26 tables), code topology, external systems |
 | **[Payments & Commerce](Docs/payments.md)** | Razorpay integration, policy engine, HMAC, audit trail, catalog |
-| **[Operator Tools](Docs/operator-tools.md)** | 22-tool catalog, golden path, artifact types |
+| **[Operator Tools](Docs/operator-tools.md)** | 25-tool catalog, golden path, artifact types |
 | **[Campaigns](Docs/campaigns.md)** | Brief schema, audience allocations, budget plans |
 | **[Landing Pages](Docs/landing-pages.md)** | Templates, A/B testing, Razorpay Checkout section |
 | **[Analytics](Docs/analytics.md)** | Seeded metrics, anomaly detection, extended GMV funnel |
