@@ -12,7 +12,7 @@ import { z } from "zod";
 import type { AgentTool } from "../types";
 import { defineTool } from "../types";
 import { runToolSafely, ok } from "./shared";
-import { getAllProducts, getProduct } from "@/lib/payments/products";
+import { getAllProducts, getProduct, upsertProduct, removeProduct } from "@/lib/payments/products";
 import {
   buildGrowthScorecard,
   computeReallocation,
@@ -257,5 +257,74 @@ export function createCommerceTools(): AgentTool[] {
       }),
   });
 
-  return [createCheckoutSession, listCatalog, recommendUpsells];
+  const addProduct = defineTool({
+    name: "add_product",
+    description: "Add a new product to the merchant catalog or update an existing SKU. Price is in INR paise (e.g. 149900 = ₹1,499). Upsell/cross-sell SKUs must reference existing products.",
+    category: COMMERCE_CATEGORY,
+    parameters: z.object({
+      sku: z.string().min(1).max(50).describe("Unique product SKU"),
+      title: z.string().min(1).max(200).describe("Product title"),
+      description: z.string().max(1000).default("").describe("Product description"),
+      amountPaise: z.number().int().min(100).describe("Price in paise (100 paise = ₹1)"),
+      currency: z.string().default("INR").describe("Currency code"),
+      upsellSkus: z.array(z.string()).default([]).describe("SKUs of upsell products"),
+      crossSellSkus: z.array(z.string()).default([]).describe("SKUs of cross-sell products"),
+    }),
+    execute: async (params) =>
+      runToolSafely("add_product", async () => {
+        const product = upsertProduct({
+          sku: params.sku,
+          title: params.title,
+          description: params.description,
+          amountPaise: params.amountPaise,
+          currency: params.currency,
+          imageUrl: null,
+          availability: "in_stock",
+          upsellSkus: params.upsellSkus,
+          crossSellSkus: params.crossSellSkus,
+        });
+
+        writeAudit({
+          actor: "operator",
+          action: "campaign_activated",
+          reason: `Product ${product.sku} added/updated: ${product.title} at ₹${(product.amountPaise / 100).toLocaleString("en-IN")}`,
+          ok: true,
+          afterState: { sku: product.sku, amountPaise: product.amountPaise },
+        });
+
+        return ok(
+          { message: `Product ${product.sku} saved: ${product.title} at ₹${(product.amountPaise / 100).toLocaleString("en-IN")}`, product },
+          { type: "catalog" as const, title: `Product added: ${product.title}`, data: { product } },
+        );
+      }),
+  });
+
+  const deleteProduct = defineTool({
+    name: "remove_product",
+    description: "Remove a product from the merchant catalog by SKU.",
+    category: COMMERCE_CATEGORY,
+    parameters: z.object({
+      sku: z.string().min(1).describe("SKU to remove"),
+    }),
+    execute: async (params) =>
+      runToolSafely("remove_product", async () => {
+        const existed = removeProduct(params.sku);
+        if (!existed) throw new Error(`SKU ${params.sku} not found in catalog`);
+
+        writeAudit({
+          actor: "operator",
+          action: "campaign_activated",
+          reason: `Product ${params.sku} removed from catalog`,
+          ok: true,
+          afterState: { sku: params.sku, removed: true },
+        });
+
+        return ok(
+          { message: `Product ${params.sku} removed from catalog` },
+          { type: "catalog" as const, title: `Product removed: ${params.sku}`, data: { sku: params.sku } },
+        );
+      }),
+  });
+
+  return [createCheckoutSession, listCatalog, recommendUpsells, addProduct, deleteProduct];
 }
