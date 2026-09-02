@@ -172,7 +172,8 @@ export function createCommerceTools(): AgentTool[] {
         }
 
         const orderId = crypto.randomUUID();
-        const checkoutUrl = `/lp/aarogya-fit`;
+        const slug = product.sku.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const checkoutUrl = `/lp/${slug}`;
         const catalogUrl = `/api/commerce/catalog`;
 
         writeAudit({
