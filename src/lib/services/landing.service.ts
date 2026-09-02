@@ -516,4 +516,4 @@ export const landingService: LandingService = {
 };
 
 /** Exposed for tests + the studio orchestration layer. */
-export { InMemoryLandingStore, SupabaseLandingStore };
+export { InMemoryLandingStore, SupabaseLandingStore, memoryStore as seededLandingStore };

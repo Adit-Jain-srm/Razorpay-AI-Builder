@@ -536,7 +536,14 @@ export async function resolvePublicLanding(
   options: { bypassExperiment?: boolean } = {},
 ): Promise<PublicLandingResult | null> {
   const store = await getPublicLandingStore();
-  const page = await store.getBySlug(slug);
+  let page = await store.getBySlug(slug);
+
+  // Fall through to seeded in-memory pages (AarogyaFit checkout, demo variants)
+  if (!page) {
+    const { seededLandingStore } = await import("@/lib/services/landing.service");
+    page = await seededLandingStore.getBySlug(slug);
+  }
+
   if (!page) return null;
 
   const document = parseLandingDocument(page.sections);
