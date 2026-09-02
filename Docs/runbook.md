@@ -123,23 +123,28 @@ npm run seed       # (planned)
 
 1. Razorpay account with Test Mode enabled (no KYC needed for test).
 2. Dashboard → Account & Settings → API Keys → **Test Mode toggle ON** → Generate Key.
-3. Note your `Key ID` (`rzp_test_…`) and `Key Secret`.
+3. **IMPORTANT:** Note your `Key ID` (`rzp_test_…`) AND `Key Secret` immediately — the secret
+   is shown only **once**. If you see `*****`, click **Regenerate Key** to get a new pair.
+4. The `Key Secret` and `Webhook Secret` below are **two different secrets**:
+   - `RAZORPAY_KEY_SECRET` = your API Key Secret (from step 3 above)
+   - `RAZORPAY_WEBHOOK_SECRET` = a secret you create yourself when adding a webhook (step below)
 
 ### Environment variables
 
 Add to `.env.local` (and Vercel production env):
 
 ```
-NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_...
-RAZORPAY_KEY_SECRET=...
-RAZORPAY_WEBHOOK_SECRET=...  (set below)
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_...          # Key ID from Dashboard → API Keys
+RAZORPAY_KEY_SECRET=...                            # Key Secret (shown once on generate — NOT the same as webhook secret)
+RAZORPAY_WEBHOOK_SECRET=...                        # YOU choose this when creating a webhook (see below, ≥32 chars)
 ```
 
 ### Webhook setup
 
 1. Dashboard → Account & Settings → Webhooks → **+ Add New Webhook**.
 2. Webhook URL: `https://mediaos-kappa.vercel.app/api/webhooks/razorpay`
-3. Secret: generate a random string ≥ 32 chars (must match `RAZORPAY_WEBHOOK_SECRET`).
+3. Secret: **create your own** random string ≥ 32 chars. This becomes your `RAZORPAY_WEBHOOK_SECRET`.
+   Example: `whsec_mediaos_track01_<random32chars>`
 4. Events: `payment.captured`, `payment.failed`, `order.paid`.
 5. Mode: **Test Mode**.
 
