@@ -266,6 +266,7 @@ describe("registerModuleTools", () => {
       [
         "build_landing_page",
         "create_campaign",
+        "create_checkout_session",
         "daily_brief",
         "deploy_landing_page",
         "detect_anomalies",

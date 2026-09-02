@@ -33,11 +33,12 @@ export const OPERATOR_WORKFLOW = [
   "5. score_creative - sanity-check or compare variants; regenerate_creative to repair a weak one.",
   "6. build_landing_page - generate a conversion-structured page with a checkout section, then deploy_landing_page to get a live /lp/{slug} URL.",
   "7. list_catalog / recommend_upsells - show the product catalog and suggest add-ons with evidence.",
-  "8. (human or AI buyer pays via Razorpay Checkout on the deployed page)",
-  "9. get_growth_scorecard - per-audience CTR/CVR/CPA and Razorpay GMV.",
-  "10. reallocate_budget - shift budget from worst to best audience (gated by policy, writes audit).",
-  "11. explain_money_action - show the full audit trail for the campaign.",
-  "12. On PAYMENT_FAILED: explain the stop-rule; offer a NEW order, never retry the failed one.",
+  "8. create_checkout_session - create a Razorpay checkout for the chosen SKU; share the payment link with the buyer.",
+  "9. (human or AI buyer pays via Razorpay Checkout on the deployed page)",
+  "10. get_growth_scorecard - per-audience CTR/CVR/CPA and Razorpay GMV.",
+  "11. reallocate_budget - shift budget from worst to best audience (gated by policy, writes audit).",
+  "12. explain_money_action - show the full audit trail for the campaign.",
+  "13. On PAYMENT_FAILED: explain the stop-rule; offer a NEW order, never retry the failed one.",
 ] as const;
 
 export interface OperatorPromptContext {

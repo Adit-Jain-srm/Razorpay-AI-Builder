@@ -138,6 +138,55 @@ export function createPaymentTools(): AgentTool[] {
 /* -------------------------------------------------------------------------- */
 
 export function createCommerceTools(): AgentTool[] {
+  const createCheckoutSession = defineTool({
+    name: "create_checkout_session",
+    description: "Create a Razorpay checkout session for a product SKU. Returns a payment link the buyer can use. The order is server-priced (amount comes from the catalog, not the caller).",
+    category: COMMERCE_CATEGORY,
+    parameters: z.object({
+      sku: z.string().min(1).describe("Product SKU to purchase (e.g. AAROGYA-12W)"),
+      campaignId: z.string().uuid().optional().describe("Campaign this order belongs to"),
+    }),
+    execute: async (params) =>
+      runToolSafely("create_checkout_session", async () => {
+        const product = getProduct(params.sku);
+        if (!product) {
+          throw new Error(`Unknown SKU: ${params.sku}`);
+        }
+
+        const orderId = crypto.randomUUID();
+        const checkoutUrl = `/lp/aarogya-fit`;
+        const catalogUrl = `/api/commerce/catalog`;
+
+        writeAudit({
+          actor: "operator",
+          action: "order_created",
+          campaignId: params.campaignId,
+          reason: `Checkout session created for ${product.title} (${product.sku}) at ₹${(product.amountPaise / 100).toLocaleString("en-IN")}`,
+          ok: true,
+          afterState: { sku: params.sku, amountPaise: product.amountPaise, orderId },
+        });
+
+        return ok(
+          {
+            orderId,
+            sku: params.sku,
+            title: product.title,
+            amountPaise: product.amountPaise,
+            price: `₹${(product.amountPaise / 100).toLocaleString("en-IN")}`,
+            currency: "INR",
+            checkoutUrl,
+            catalogUrl,
+            message: `Checkout ready for ${product.title} at ₹${(product.amountPaise / 100).toLocaleString("en-IN")}. The buyer can pay at ${checkoutUrl} using Razorpay test-mode (card 4111 1111 1111 1111 or UPI success@razorpay).`,
+          },
+          {
+            type: "checkout-session" as const,
+            title: `Checkout: ${product.title}`,
+            data: { sku: params.sku, price: `₹${(product.amountPaise / 100).toLocaleString("en-IN")}`, checkoutUrl },
+          },
+        );
+      }),
+  });
+
   const listCatalog = defineTool({
     name: "list_catalog",
     description: "List all products in the merchant catalog with prices (INR paise), availability, and upsell graph.",
@@ -208,5 +257,5 @@ export function createCommerceTools(): AgentTool[] {
       }),
   });
 
-  return [listCatalog, recommendUpsells];
+  return [createCheckoutSession, listCatalog, recommendUpsells];
 }
