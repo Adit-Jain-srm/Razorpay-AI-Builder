@@ -42,11 +42,13 @@ Indian D2C digital + physical-adjacent: **AarogyaFit**.
 
 ## Judge click-path (5 minutes, zero setup)
 
-1. Open https://mediaos-kappa.vercel.app — Command Center shows AarogyaFit campaign + GMV card.
-2. Click **Operator** → ask "Launch an AarogyaFit campaign targeting fitness-conscious 22–35 year olds".
-3. Watch: research → campaign → creatives → landing page → checkout configured.
-4. Open the deployed `/lp/aarogya-…` — click Pay — enter test card — success → thanks page.
-5. Back to Command Center — GMV updated — click audit link — see `order_created` + `payment_captured`.
-6. In Operator → trigger a failed payment (or navigate to `/lp/…` with `failure@razorpay` UPI) — see stop-rule in audit.
-7. Open `/api/commerce/catalog` — valid JSON with INR items + `is_eligible_checkout`.
-8. In Operator → "Reallocate budget from audience C to B" — see mandate + audit.
+1. Open https://mediaos-kappa.vercel.app — Command Center.
+2. **Direct checkout:** Open https://mediaos-kappa.vercel.app/lp/aarogya-fit — see the AarogyaFit page with **Pay ₹1,499** button. Pay with test card `4111 1111 1111 1111`.
+3. **Catalog API:** Open https://mediaos-kappa.vercel.app/api/commerce/catalog — see INR products with `is_eligible_checkout`.
+4. Click **Operator** → ask "Launch an AarogyaFit campaign targeting fitness-conscious 22–35 year olds".
+5. Watch: research → campaign → creatives → landing page → **auto-checkout session** → payment link.
+6. Ask "Show the growth scorecard" → audience A/B/C CPA comparison.
+7. Ask "Reallocate budget from audience C to B" — see mandate + audit.
+8. Ask "Show the audit trail" — see every money action with timestamps and reasons.
+9. Test failure: on `/lp/aarogya-fit`, use UPI `failure@razorpay` — audit shows stop-rule.
+10. Ask "Add a product: MEDIAOS-PRO, AI Growth Suite, 499900 paise" → product added to catalog.

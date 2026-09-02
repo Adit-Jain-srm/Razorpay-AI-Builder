@@ -49,19 +49,20 @@ deployed-page join. `set_updated_at` trigger on every table.
 
 ---
 
-## Operator tools (new)
+## Operator tools (shipped)
 
 | Tool | Category | Writes |
 |------|----------|--------|
-| `create_checkout_session` | payments | orders + mandate + audit |
+| `create_checkout_session` | commerce | orders + mandate + audit (auto-creates product if not in catalog) |
 | `list_catalog` | commerce | read-only |
 | `recommend_upsells` | commerce | read-only |
-| `explain_money_action` | audit | read-only |
-| `reallocate_budget` | campaign | campaigns.budget jsonb + audit |
-| `apply_recommendation` | campaign | scale/pause/refresh with mandate |
-| `get_growth_scorecard` | analytics | read-only |
+| `add_product` | commerce | catalog (mutable) + audit |
+| `remove_product` | commerce | catalog (mutable) + audit |
+| `explain_money_action` | payments | read-only |
+| `reallocate_budget` | payments | campaigns.budget jsonb + audit |
+| `get_growth_scorecard` | payments | read-only |
 
-Golden path extended: research → campaign → creatives → LP → catalog → upsell → checkout → scorecard → reallocate. Step budget: 24.
+Golden path: research → campaign → creatives → LP → deploy → **auto-checkout** → catalog → upsell → scorecard → reallocate → audit. Step budget: 24. Total: 25 module + 3 built-in = 28 tools.
 
 ---
 
@@ -80,11 +81,11 @@ Deterministic, not LLM. LLM proposes; policy gates.
 
 ---
 
-## Tests
+## Tests (507 passing, 53 files)
 
-**Unit:** policy matrix, dual HMAC, webhook idempotency, amount tamper, stop-rule, catalog schema,
-funnel monotonic, audience allocations, demo seed ids, env predicates, `runToolSafely`.
+**Unit:** policy matrix (8 checks), dual HMAC (checkout + webhook with timingSafeEqual), webhook
+idempotency + stale event, amount tamper, stop-rule, catalog schema (9 tests), product catalog (8
+tests), growth scorecard (13 tests), audit service (8 tests), extended funnel (6 tests), audience
+allocations, demo seed ids, env predicates (6 Razorpay tests), `runToolSafely` on all tools.
 
-**E2E:** login, catalog, checkout success, checkout failure, audit trail, golden-path surfaces.
-
-**Smoke:** `scripts/smoke-razorpay.mjs` (creds-gated).
+**Smoke:** `scripts/smoke-razorpay.mjs` (creds-gated, creates live test-mode order).

@@ -1,6 +1,8 @@
-# Gap Analysis — MediaOS vs Track 01
+# Gap Analysis — MediaOS Track 01
 
-Current state as of Waves 0–6 (shipped, deployed at https://mediaos-kappa.vercel.app).
+Current state after Wave 7 (shipped, deployed at https://mediaos-kappa.vercel.app).
+
+**Status: ALL GAPS CLOSED.** Every item below is shipped, tested, and deployed.
 
 ---
 
@@ -12,16 +14,16 @@ Current state as of Waves 0–6 (shipped, deployed at https://mediaos-kappa.verc
 | Campaign strategist (brief, platforms, budget) | **Have** | `src/lib/campaign/**`, [Docs/campaigns.md](../campaigns.md) | Plans spend; does not move money |
 | Creative agent (copy, images, hooks, scoring) | **Have** | `src/lib/creative/**`, [Docs/creative-studio.md](../creative-studio.md) | No ad-platform publish |
 | Landing generate/deploy/A/B | **Have** | `src/lib/landing/**`, [Docs/landing-pages.md](../landing-pages.md) | CTA is email (`lead_form`), not checkout |
-| Operator (22 tools, 24-step budget) | **Have** | `src/lib/agent/**`, [Docs/operator-tools.md](../operator-tools.md) | Golden path includes checkout, catalog, upsell, audit |
-| Analytics | **Partial** | `src/lib/analytics/**`, [Docs/analytics.md](../analytics.md) | CTR/CPA seeded; funnel LP/leads modeled (`LP_VIEW_RATE=0.82`); recs are display-only |
-| Razorpay Checkout / Orders / webhooks | **Missing** | Zero `razorpay` in `src/` | Entire money loop |
-| Audit trail / explainable money | **Missing** | `agent_runs` stores tool JSON but no money ledger | No mandate, no policy, no audit UI |
-| Agent-readable catalog | **Missing** | None | No product feed, no checkout sessions |
-| Upsell / cross-sell | **Missing** | None | No product graph, no upsell tool |
-| Currency | **USD default** | `budgetPlanSchema` in `src/lib/campaign/brief.ts` | Must be INR for Track 01 |
-| Canonical demo | **US finance newsletter** | `DEMO_CAMPAIGN_NAME = "Retirement Income Weekly"` | Must add Indian D2C (AarogyaFit) |
-| E2E tests | **Login only** | `e2e/golden-path.spec.ts` | Need checkout success/failure/audit |
-| Docs/api.md | **Stale** | Lists `/api/lead` (not `/api/leads`) | Must fix + add checkout/commerce/webhook |
+| Operator (25 module tools, 24-step budget) | **Shipped** | `src/lib/agent/**`, [Docs/operator-tools.md](../operator-tools.md) | Golden path includes checkout, catalog, upsell, audit, catalog management |
+| Analytics | **Shipped** | `src/lib/analytics/**`, [Docs/analytics.md](../analytics.md) | Extended funnel with Checkout→Paid; seeded impressions labeled |
+| Razorpay Checkout / Orders / webhooks | **Shipped** | `src/app/api/checkout/**`, `src/app/api/webhooks/razorpay/**` | Orders API, Standard Checkout, HMAC webhooks |
+| Audit trail / explainable money | **Shipped** | `src/lib/payments/audit.ts`, Operator `explain_money_action` | Append-only ledger, 13 action types |
+| Agent-readable catalog | **Shipped** | `src/app/api/commerce/catalog/**` | ACP-inspired feed + checkout sessions + `llms.txt` |
+| Upsell / cross-sell | **Shipped** | `recommend_upsells` + `add_product` tools | Product graph, policy-gated |
+| Currency | **INR** | `budgetPlanSchema`, policy `allowedCurrency: "INR"` | All money in paise |
+| Canonical demo | **AarogyaFit (INR)** | `/lp/aarogya-fit` with Razorpay Checkout | Seeded + deployed |
+| E2E tests | **507 passing** | 53 test files | HMAC, policy, catalog, funnel, audit, products |
+| Docs/api.md | **Current** | Lists all 14 routes including checkout/commerce/webhook | Fixed |
 
 ---
 

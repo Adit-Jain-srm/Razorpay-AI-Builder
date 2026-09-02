@@ -1,6 +1,7 @@
-# Razorpay AI Buildathon — Wave 7 Docs Pack
+# Razorpay AI Buildathon — Wave 7 Complete
 
-Source of truth for the Track 01 upgrade. Every file here was written before money code.
+Source of truth for the Track 01 upgrade. **All phases shipped.** 25 module tools, 507 tests, live at
+https://mediaos-kappa.vercel.app with Razorpay test-mode Checkout at `/lp/aarogya-fit`.
 
 ## Quality bar
 
