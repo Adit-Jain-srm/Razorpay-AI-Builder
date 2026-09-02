@@ -48,6 +48,9 @@ export const DEMO_TRACK01_CAMPAIGN_ID = "00000000-0000-4000-8000-000000000010";
 export const DEMO_TRACK01_CAMPAIGN_NAME = "AarogyaFit Growth Campaign";
 export const DEMO_TRACK01_LANDING_SLUG = "aarogya-fit";
 
+/** Stable landing page ID for the AarogyaFit checkout page. */
+export const DEMO_TRACK01_LANDING_ID = "d2000000-0000-4000-8000-000000000001";
+
 /** AarogyaFit product SKUs (must match src/lib/payments/products.ts). */
 export const DEMO_TRACK01_SKUS = {
   PROGRAM: "AAROGYA-12W",

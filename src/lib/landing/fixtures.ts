@@ -4,6 +4,12 @@ import {
   DEMO_LANDING_IDS,
   DEMO_LANDING_SLUG,
   DEMO_PAIN_POINTS,
+  DEMO_TRACK01_CAMPAIGN_ID,
+  DEMO_TRACK01_CAMPAIGN_NAME,
+  DEMO_TRACK01_LANDING_ID,
+  DEMO_TRACK01_LANDING_SLUG,
+  DEMO_TRACK01_PAIN_POINTS,
+  DEMO_TRACK01_SKUS,
   DEMO_USER_ID,
 } from "@/lib/seed/constants";
 
@@ -48,6 +54,7 @@ export const DEMO_FINANCE_CONTEXT: LandingContext = {
 export interface DemoLandingSeed {
   id: string;
   slug: string;
+  campaignId: string;
   status: "draft" | "deployed" | "paused";
   document: LandingDocument;
   deployedAt: string | null;
@@ -123,6 +130,7 @@ function buildVariant(spec: VariantSpec): DemoLandingSeed {
   return {
     id: spec.id,
     slug: spec.slug,
+    campaignId: DEMO_CAMPAIGN_ID,
     status: "deployed",
     document,
     deployedAt: DEPLOYED_AT,
@@ -134,5 +142,73 @@ function buildVariant(spec: VariantSpec): DemoLandingSeed {
 
 /** Builds the seeded demo landing pages (one deployed A/B experiment). */
 export function buildSeededLandingPages(): DemoLandingSeed[] {
-  return VARIANT_SPECS.map(buildVariant);
+  return [...VARIANT_SPECS.map(buildVariant), buildAarogyaFitPage()];
+}
+
+/* -------------------------------------------------------------------------- */
+/* AarogyaFit checkout page (Wave 7 Track 01)                                */
+/* -------------------------------------------------------------------------- */
+
+const AAROGYA_CONTEXT: LandingContext = {
+  brandName: DEMO_TRACK01_CAMPAIGN_NAME,
+  vertical: "fitness & wellness D2C",
+  productName: "AarogyaFit 12-Week Program",
+  angle: "structured fitness for beginners",
+  audience: "fitness-conscious 22-35 year olds in India",
+  painPoints: [...DEMO_TRACK01_PAIN_POINTS],
+  benefits: [
+    "A structured 12-week plan — progressive overload, mobility, and recovery",
+    "No gym required — works at home or in the gym",
+    "Nutrition add-on available — macro-balanced meal plans included in the bundle",
+  ],
+  offer: "the AarogyaFit 12-week training program",
+};
+
+function buildAarogyaFitPage(): DemoLandingSeed {
+  resetSectionSequence(500);
+  const document = buildLandingDocument(
+    "squeeze",
+    AAROGYA_CONTEXT,
+    {
+      source: "seeded",
+      experiment: null,
+      copy: {
+        heroHeadline: "Stop starting over. Start a plan that sticks.",
+        heroSubheadline: "The 12-week training program designed for Indian beginners who want real results — not another YouTube playlist. ₹1,499 — secure payment via Razorpay.",
+      },
+    },
+  );
+
+  // Inject a checkout section before the compliance section
+  const complianceIdx = document.sections.findIndex((s) => s.type === "compliance");
+  const checkoutSection = {
+    id: "s_checkout_aarogya",
+    label: "Checkout",
+    type: "checkout" as const,
+    headline: "Start your 12-week transformation",
+    subtitle: "Secure payment powered by Razorpay Test Mode. Use card 4111 1111 1111 1111 or UPI success@razorpay.",
+    sku: DEMO_TRACK01_SKUS.PROGRAM,
+    ctaLabel: "Pay ₹1,499 — Start now",
+    showUpsells: false,
+    successPath: "thanks",
+    failurePath: "failed",
+  };
+
+  if (complianceIdx >= 0) {
+    document.sections.splice(complianceIdx, 0, checkoutSection);
+  } else {
+    document.sections.push(checkoutSection);
+  }
+
+  return {
+    id: DEMO_TRACK01_LANDING_ID,
+    slug: DEMO_TRACK01_LANDING_SLUG,
+    campaignId: DEMO_TRACK01_CAMPAIGN_ID,
+    status: "deployed",
+    document,
+    deployedAt: "2026-09-02T00:00:00.000Z",
+    views: 124,
+    leads: 0,
+    createdAt: "2026-09-02T00:00:00.000Z",
+  };
 }

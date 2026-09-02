@@ -4,7 +4,7 @@ import { isSupabaseAdminConfigured, isSupabaseConfigured } from "@/lib/env";
 import { UpstreamError, ValidationError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { buildSeededLandingPages, DEMO_CAMPAIGN_ID, DEMO_LANDING_USER_ID } from "@/lib/landing/fixtures";
+import { buildSeededLandingPages, DEMO_LANDING_USER_ID } from "@/lib/landing/fixtures";
 import { renderDocumentToHtml } from "@/lib/landing/html";
 import { parseLandingDocument } from "@/lib/landing/types";
 import type {
@@ -114,7 +114,7 @@ class InMemoryLandingStore implements LandingStore {
     for (const seed of buildSeededLandingPages()) {
       this.pages.set(seed.id, {
         id: seed.id,
-        campaign_id: DEMO_CAMPAIGN_ID,
+        campaign_id: seed.campaignId,
         user_id: this.userId,
         slug: seed.slug,
         template_type: seed.document.template,
