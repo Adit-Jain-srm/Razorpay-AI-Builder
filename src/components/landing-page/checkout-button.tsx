@@ -107,7 +107,7 @@ export function CheckoutButton({
           contact: "9999999999",
         },
         notes: {
-          sku: "AAROGYA-12W",
+          sku,
         },
         handler: (response: Record<string, unknown>) => {
           // Verify signature (fire-and-forget — redirect immediately for UX)
