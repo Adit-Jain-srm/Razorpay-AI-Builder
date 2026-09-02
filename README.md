@@ -145,13 +145,21 @@ flowchart TB
 
 > The Buildathon form asks: *"What broke and how did you fix it?"*
 
-**1. Unbounded in-memory stores (memory leak)** — Three demo-mode stores (`processedEventIds`, `sessions`, `auditStore`) had no size cap. On warm Vercel instances they'd grow until recycled. Fix: FIFO eviction caps (10K/1K/10K).
+**1. Razorpay Checkout: "Payment could not be completed"** — The `handler` callback was `async`, causing Razorpay to close the modal before it resolved. Fix: sync handler + fire-and-forget verify + `prefill` for test mode.
 
-**2. Cross-sell savings calculation (wrong ₹ amount)** — `upsellSkus[0]` was `undefined` for products without upsells, making savings negative. Fix: `.reduce()` over all components, `Math.max(0, ...)`.
+**2. Seeded landing page 404 on production** — `/lp/aarogya-fit` worked locally but returned 404 on Vercel because `resolvePublicLanding` queried Supabase (no row) without falling through to the in-memory seeded store. Fix: fallthrough to `seededLandingStore` in both `studio.ts` and `landingService`.
 
-**3. Type casts bypassing error handling** — Two tools used `as unknown` to return errors directly, bypassing `runToolSafely`. Fix: `throw new Error()` — the catch boundary converts cleanly.
+**3. Serverless statelessness: product not found across requests** — `add_product` on instance A; `create_checkout_session` on instance B → "Unknown SKU." Fix: `create_checkout_session` accepts inline `title` + `amountPaise` and auto-creates the product on-the-fly.
 
-Full postmortem: [Docs/buildathon/submission-draft.md](Docs/buildathon/submission-draft.md)
+**4. Unbounded in-memory stores (memory leak)** — Three stores had no size cap on warm Vercel instances. Fix: FIFO eviction caps (10K/1K/10K).
+
+**5. Cross-sell savings: wrong ₹ amount** — `upsellSkus[0]` was `undefined` for products without upsells → savings = ₹0. Fix: `.reduce()` over all components, `Math.max(0, ...)`.
+
+**6. Type casts bypassing error handling** — Two tools used `as unknown` to return errors, bypassing `runToolSafely`. Fix: `throw new Error()` — the catch boundary converts cleanly.
+
+**7. Hardcoded SKU in Razorpay notes** — `notes: { sku: "AAROGYA-12W" }` sent for every product. Fix: `notes: { sku }` — dynamic from props.
+
+Full postmortem with reproduction steps: [Docs/buildathon/submission-draft.md](Docs/buildathon/submission-draft.md)
 
 ---
 
