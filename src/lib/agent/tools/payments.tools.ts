@@ -140,13 +140,14 @@ export function createPaymentTools(): AgentTool[] {
 export function createCommerceTools(): AgentTool[] {
   const createCheckoutSession = defineTool({
     name: "create_checkout_session",
-    description: "Create a Razorpay checkout session for a product. Use a known SKU (e.g. AAROGYA-12W) OR provide title + amountPaise for a new/custom product. Returns a payment link.",
+    description: "Create a Razorpay checkout session for a product. Use a known SKU (e.g. AAROGYA-12W) OR provide title + amountPaise for a new/custom product. Pass landingPageSlug from a previously deployed page so the checkout URL is real.",
     category: COMMERCE_CATEGORY,
     parameters: z.object({
       sku: z.string().min(1).describe("Product SKU (e.g. AAROGYA-12W, MEDIAOS-PRO)"),
       title: z.string().max(200).optional().describe("Product title (required if SKU not in catalog)"),
       amountPaise: z.number().int().min(100).optional().describe("Price in paise (required if SKU not in catalog, e.g. 149900 = ₹1,499)"),
       campaignId: z.string().uuid().optional().describe("Campaign this order belongs to"),
+      landingPageSlug: z.string().max(200).optional().describe("Slug of the deployed landing page (from deploy_landing_page result). Defaults to aarogya-fit for seeded SKUs."),
     }),
     execute: async (params) =>
       runToolSafely("create_checkout_session", async () => {
@@ -172,7 +173,9 @@ export function createCommerceTools(): AgentTool[] {
         }
 
         const orderId = crypto.randomUUID();
-        const slug = product.sku.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        // Use the actual deployed landing page slug if provided, else derive from SKU
+        const slug = params.landingPageSlug
+          ?? (product.sku.startsWith("AAROGYA") ? "aarogya-fit" : product.sku.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
         const checkoutUrl = `/lp/${slug}`;
         const catalogUrl = `/api/commerce/catalog`;
 
