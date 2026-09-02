@@ -490,7 +490,10 @@ export const landingService: LandingService = {
     return (await getLandingStore()).get(id);
   },
   async getBySlug(slug) {
-    return (await getPublicLandingStore()).getBySlug(slug);
+    const page = await (await getPublicLandingStore()).getBySlug(slug);
+    if (page) return page;
+    // Fall through to in-memory seeded pages (AarogyaFit checkout, demo variants)
+    return memoryStore.getBySlug(slug);
   },
   async create(input) {
     return (await getLandingStore()).create(input);
