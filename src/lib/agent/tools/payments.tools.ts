@@ -140,17 +140,35 @@ export function createPaymentTools(): AgentTool[] {
 export function createCommerceTools(): AgentTool[] {
   const createCheckoutSession = defineTool({
     name: "create_checkout_session",
-    description: "Create a Razorpay checkout session for a product SKU. Returns a payment link the buyer can use. The order is server-priced (amount comes from the catalog, not the caller).",
+    description: "Create a Razorpay checkout session for a product. Use a known SKU (e.g. AAROGYA-12W) OR provide title + amountPaise for a new/custom product. Returns a payment link.",
     category: COMMERCE_CATEGORY,
     parameters: z.object({
-      sku: z.string().min(1).describe("Product SKU to purchase (e.g. AAROGYA-12W)"),
+      sku: z.string().min(1).describe("Product SKU (e.g. AAROGYA-12W, MEDIAOS-PRO)"),
+      title: z.string().max(200).optional().describe("Product title (required if SKU not in catalog)"),
+      amountPaise: z.number().int().min(100).optional().describe("Price in paise (required if SKU not in catalog, e.g. 149900 = ₹1,499)"),
       campaignId: z.string().uuid().optional().describe("Campaign this order belongs to"),
     }),
     execute: async (params) =>
       runToolSafely("create_checkout_session", async () => {
-        const product = getProduct(params.sku);
+        let product = getProduct(params.sku);
+
+        // If SKU not in seeded catalog, create it on-the-fly from provided params
+        if (!product && params.title && params.amountPaise) {
+          product = upsertProduct({
+            sku: params.sku,
+            title: params.title,
+            description: "",
+            amountPaise: params.amountPaise,
+            currency: "INR",
+            imageUrl: null,
+            availability: "in_stock",
+            upsellSkus: [],
+            crossSellSkus: [],
+          });
+        }
+
         if (!product) {
-          throw new Error(`Unknown SKU: ${params.sku}`);
+          throw new Error(`Unknown SKU: ${params.sku}. Provide title and amountPaise to create it.`);
         }
 
         const orderId = crypto.randomUUID();
