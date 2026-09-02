@@ -1,65 +1,159 @@
 # MediaOS — Autonomous Merchant Growth Agent
 
-> Research buyers. Deploy campaigns. Collect ₹. Optimize with an audit trail.
+### Razorpay AI Buildathon 2026 | Track 01: AI Growth & Agentic Commerce
 
-[Live Demo](https://mediaos-kappa.vercel.app) | [Video Walkthrough](#how-to-use-the-demo) | [Razorpay AI Buildathon Track 01](https://razorpay.com/buildathon/)
+> An AI agent that researches Indian buyers, deploys campaigns, collects ₹ through Razorpay test-mode Checkout, and optimizes with a policy-gated audit trail on every money action.
 
-## What does this tool do?
-
-MediaOS is an autonomous AI growth agent for Indian merchants. Its Operator agent researches buyers with live web data, orchestrates a bounded ₹ campaign, generates platform-specific creatives and conversion-optimized landing pages with Razorpay test-mode Checkout, exposes an agent-readable product catalog, upsells within a signed mandate, and optimizes toward a measurable ₹ objective — with an append-only audit trail on every money action, including graceful handling of payment failures.
-
-The core differentiator is the **Audience Research Intelligence Engine**: six real-data providers (competitor ads, search intent, Reddit/community, news, social listening, web intelligence) aggregated through Bright Data the way OpenBB aggregates financial data. Every downstream artifact (copy, images, landing pages, recommendations) is grounded in cited, real-world audience intelligence. This is live and clickable, not a prototype.
-
-## Why did you build THIS one?
-
-Every team already has creative tools and dashboards. Nobody has an automated system that actually does the audience research, the highest-leverage, least-automated step in media buying. The brief said "do the research." I built the agent that does it.
-
-Most AI marketing tools bolt a chatbot onto existing workflows. MediaOS inverts that: the research engine is the foundation, the agent is the primary surface, and the traditional screens (campaigns, creatives, analytics) are secondary control surfaces you drop into when you want manual control. The compounding insight is that research makes everything else better. A persona built from real Reddit pain points produces stronger hooks than one guessed from demographics. And the agent turns a pile of disconnected tools into a teammate that remembers context across steps.
-
-## What would you build next?
-
-**Wave 7 (Track 01) has been built.** The Razorpay money loop, policy engine, audit trail, agent-readable catalog, checkout sessions, upsell graph, and executable budget reallocation are all shipped. What remains on the roadmap:
-
-**Live ad-platform APIs.** Google, Meta, TikTok feeding real spend data back so CPA is not simulated.
-
-**NPCI UAP integration.** When the Unified Agent Protocol spec is public, register MediaOS as a verified agent for UPI agentic payments.
-
-**Full ACP certification.** Submit the product feed to OpenAI for Instant Checkout eligibility in ChatGPT.
+[![Live Demo](https://img.shields.io/badge/Live-mediaos--kappa.vercel.app-10b981?style=for-the-badge)](https://mediaos-kappa.vercel.app)
+[![Catalog API](https://img.shields.io/badge/Catalog-/api/commerce/catalog-3b82f6?style=for-the-badge)](https://mediaos-kappa.vercel.app/api/commerce/catalog)
+[![Tests](https://img.shields.io/badge/Tests-507%20passing-22c55e?style=for-the-badge)](#testing)
+[![Track 01](https://img.shields.io/badge/Track-01%20AI%20Growth-f59e0b?style=for-the-badge)](https://razorpay.com/buildathon/)
 
 ---
 
-## How to use the demo
+## Track 01 Bar Compliance
 
-1. Open [mediaos-kappa.vercel.app](https://mediaos-kappa.vercel.app)
-2. The **Command Center** shows live campaigns with analytics, creatives, and deployed landing pages.
-3. Open the **Operator** and ask: *"Launch an AarogyaFit campaign targeting fitness-conscious 22–35 year olds in India."*
-4. Watch the agent plan, research (Bright Data), synthesize personas, create a campaign (INR budget), and generate hook-analyzed ad variants.
-5. Ask *"Build a landing page with Razorpay checkout"* — it deploys a real `/lp/...` page with a Pay button.
-6. On the deployed page, click **Pay now** — enter a test card (`4111 1111 1111 1111`) or UPI (`success@razorpay`).
-7. Open **Performance Intelligence** — the AI daily brief flags anomalies and recommends budget reallocations.
-8. Ask the Operator *"Show the audit trail"* — see every money action (order created, payment captured, budget reallocated) with timestamps and reasons.
-9. Test failure: use UPI `failure@razorpay` — the audit shows the stop-rule: "do not retry this order."
-10. Visit `/api/commerce/catalog` — the ACP-inspired product feed is agent-readable.
+| Requirement | How MediaOS meets it |
+|-------------|---------------------|
+| **Every money action explainable** | `reason` (min 24 chars) + `evidence[]` on every audit event |
+| **Every money action bounded** | ₹5K order cap, ₹50K campaign cap, 20/10min rate limit, integer paise |
+| **Every money action gated** | Deterministic policy engine (not LLM); AP2-style mandate persisted before Razorpay call |
+| **Audit trail shown** | `explain_money_action` tool + campaign audit timeline |
+| **One failure handled gracefully** | `payment.failed` stop-rule: no retry on same order; webhook audit event |
+
+**All four example directions shipped:** Campaign orchestrator, Conversational checkout, Agent-readable catalog, Upsell & cross-sell agent.
 
 ---
 
 ## Architecture
 
-MediaOS is agent-native: the Operator is the primary surface, with a plan-execute-observe runtime that calls 22 typed, Zod-validated tools spanning research, campaigns, creatives, landing pages, analytics, payments, and commerce. The research engine follows an OpenBB-inspired TET (Transform-Extract-Transform) provider abstraction with 6 providers running in parallel over Bright Data (SERP API, Web Unlocker, Scraping Browser). Every money action is gated by a deterministic policy engine and logged to an append-only audit trail. AI generation uses Azure AI Foundry (gpt-5.3-chat for reasoning/copy, MAI-Image-2.5 for visuals) through the Vercel AI SDK. Payments use Razorpay Test Mode (Orders API + Standard Checkout + Webhooks). Persistence is Supabase (Postgres with RLS, Auth, Storage — 26 tables across 3 migrations). See [Docs/architecture.md](Docs/architecture.md) for the full system diagram and data-flow.
+```mermaid
+flowchart TB
+    subgraph operator [The Operator — 22 Typed Tools]
+        Plan["Plan (decompose goal)"]
+        Execute["Execute (stream + observe)"]
+        Policy["Policy Engine (deterministic)"]
+    end
 
-## Tech Stack
+    subgraph research [Research Intelligence Engine]
+        BD["Bright Data (6 providers)"]
+        Personas["Personas + Pain Points"]
+    end
 
-- **Framework:** Next.js 16, React 19.2, TypeScript strict
-- **Styling:** Tailwind CSS v4, shadcn (Base UI), Geist/Geist Mono
-- **AI:** Azure AI Foundry (gpt-5.3-chat + MAI-Image-2.5), Vercel AI SDK v7
-- **Research data:** Bright Data (SERP API, Web Unlocker, Scraping Browser via puppeteer-core)
-- **Payments:** Razorpay Test Mode (Orders API, Standard Checkout, Webhooks)
-- **Database:** Supabase (Postgres + RLS + Auth + Storage) — 26 tables, 3 migrations
-- **State:** Zustand, TanStack Query
-- **Charts:** Recharts
-- **Testing:** Vitest (499 unit/integration tests), Playwright (e2e)
-- **Quality:** ESLint, Conventional Commits, strict TSConfig
-- **Deploy:** Vercel (Edge + Node runtimes)
+    subgraph commerce [Commerce Layer]
+        Catalog["Agent-Readable Catalog"]
+        Checkout["Razorpay Checkout"]
+        Upsell["Upsell / Cross-sell"]
+    end
+
+    subgraph money [Money Loop]
+        Orders["Orders API (INR paise)"]
+        Webhooks["Webhooks (HMAC verified)"]
+        Audit["Audit Trail (append-only)"]
+        Mandate["AP2-style Mandates"]
+    end
+
+    subgraph modules [Campaign Modules]
+        Campaign["Campaign Strategist"]
+        Creative["Creative Studio"]
+        Landing["Landing Pages + A/B"]
+        Analytics["Analytics + GMV Funnel"]
+    end
+
+    subgraph external [External Systems]
+        Azure["Azure AI Foundry"]
+        Razorpay["Razorpay Test Mode"]
+        Supabase["Supabase (26 tables)"]
+    end
+
+    operator --> research
+    operator --> modules
+    operator --> commerce
+    commerce --> money
+    money --> Policy
+    Policy --> Mandate
+    Policy --> Audit
+
+    research --> BD
+    modules --> Azure
+    modules --> Supabase
+    money --> Razorpay
+    Webhooks --> Audit
+```
+
+---
+
+## What it does (30 seconds)
+
+1. **Researches** Indian buyers with 6 live Bright Data providers (competitor ads, search intent, Reddit, news, social, web intelligence)
+2. **Orchestrates** a bounded ₹ campaign with AI-generated creatives and conversion-optimized landing pages
+3. **Collects ₹** through Razorpay test-mode Standard Checkout on deployed `/lp/` pages
+4. **Exposes** an ACP-inspired agent-readable product catalog at `/api/commerce/catalog`
+5. **Upsells** within a signed mandate — policy engine gates every money action
+6. **Optimizes** by reallocating budget from worst to best audience based on CPA scorecard
+7. **Audits** every action with timestamp, actor, reason, and outcome — including graceful failure handling
+
+---
+
+## Live demo (5-minute judge path)
+
+1. Open **[mediaos-kappa.vercel.app](https://mediaos-kappa.vercel.app)** — Command Center
+2. **Operator** → *"Launch an AarogyaFit campaign for fitness-conscious 22-35 year olds"*
+3. Watch: research → campaign → creatives → landing page with checkout
+4. **Pay** on `/lp/...` with test card `4111 1111 1111 1111` or UPI `success@razorpay`
+5. **Audit** → see `order_created` + `payment_captured` with reasons
+6. **Failure** → UPI `failure@razorpay` → stop-rule in audit (no retry)
+7. **Catalog** → `GET /api/commerce/catalog` returns INR products
+8. **Reallocate** → *"Shift budget from audience C to B"* → scorecard + mandate + audit
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16, React 19.2, TypeScript strict |
+| AI | Azure AI Foundry (gpt-5.3-chat + MAI-Image-2.5), Vercel AI SDK v7 |
+| Research | Bright Data (SERP API, Web Unlocker, Scraping Browser) |
+| Payments | **Razorpay Test Mode** (Orders API, Standard Checkout, Webhooks) |
+| Database | Supabase (Postgres + RLS + Auth) — 26 tables, 3 migrations |
+| UI | Tailwind v4, shadcn (Base UI), Recharts, Motion |
+| Testing | Vitest (507 tests), Playwright (e2e) |
+| Deploy | Vercel (Edge + Node runtimes) |
+
+---
+
+## Documentation
+
+| Document | What's inside |
+|----------|--------------|
+| **[Architecture](Docs/architecture.md)** | System diagrams, data model (26 tables), code topology, external systems |
+| **[Payments & Commerce](Docs/payments.md)** | Razorpay integration, policy engine, HMAC, audit trail, catalog |
+| **[Operator Tools](Docs/operator-tools.md)** | 22-tool catalog, golden path, artifact types |
+| **[Campaigns](Docs/campaigns.md)** | Brief schema, audience allocations, budget plans |
+| **[Landing Pages](Docs/landing-pages.md)** | Templates, A/B testing, Razorpay Checkout section |
+| **[Analytics](Docs/analytics.md)** | Seeded metrics, anomaly detection, extended GMV funnel |
+| **[Research Engine](Docs/research-engine.md)** | OpenBB-inspired TET providers, Bright Data |
+| **[ADR 0005](Docs/adr/0005-razorpay-money-loop.md)** | Razorpay money loop design rationale |
+| **[Runbook](Docs/runbook.md)** | Setup, migrations, Razorpay test mode, verification |
+| **[Track 01 Bar](Docs/buildathon/track-01-bar.md)** | Money-action taxonomy, failure matrix, protocol map |
+| **[Protocols](Docs/buildathon/protocols.md)** | UAP / ACP / AP2 / x402 — what we implement vs cite |
+
+---
+
+## What broke and how it was fixed
+
+> The Buildathon form asks: *"What broke and how did you fix it?"*
+
+**1. Unbounded in-memory stores (memory leak)** — Three demo-mode stores (`processedEventIds`, `sessions`, `auditStore`) had no size cap. On warm Vercel instances they'd grow until recycled. Fix: FIFO eviction caps (10K/1K/10K).
+
+**2. Cross-sell savings calculation (wrong ₹ amount)** — `upsellSkus[0]` was `undefined` for products without upsells, making savings negative. Fix: `.reduce()` over all components, `Math.max(0, ...)`.
+
+**3. Type casts bypassing error handling** — Two tools used `as unknown` to return errors directly, bypassing `runToolSafely`. Fix: `throw new Error()` — the catch boundary converts cleanly.
+
+Full postmortem: [Docs/buildathon/submission-draft.md](Docs/buildathon/submission-draft.md)
+
+---
 
 ## Running locally
 
@@ -67,14 +161,14 @@ MediaOS is agent-native: the Operator is the primary surface, with a plan-execut
 git clone https://github.com/Adit-Jain-srm/Razorpay-AI-Builder.git
 cd Razorpay-AI-Builder
 npm install
-cp .env.example .env.local
-# Fill in credentials (see .env.example for guidance)
+cp .env.example .env.local   # fill in credentials
 npm run dev
 ```
 
-The app boots without credentials in a degraded demo mode. To enable real AI and live research, fill in Supabase, Azure AI Foundry, and Bright Data keys. See [Docs/runbook.md](Docs/runbook.md) for full setup including Supabase migrations and environment details.
+The app boots without credentials in degraded demo mode. See **[Docs/runbook.md](Docs/runbook.md)** for full setup including Razorpay Test Mode, Supabase migrations, and verification steps.
 
-## Environment variables required for deployment
+<details>
+<summary><strong>Environment variables (19 total)</strong></summary>
 
 | Variable | Purpose |
 |----------|---------|
@@ -91,12 +185,30 @@ The app boots without credentials in a degraded demo mode. To enable real AI and
 | `AZURE_OPENAI_API_VERSION` | API version (`preview`) |
 | `AZURE_AI_PROJECT_ENDPOINT` | Project endpoint for responses API |
 | `BRIGHTDATA_API_TOKEN` | Bright Data API token |
-| `BRIGHTDATA_WEB_UNLOCKER_ZONE` | Web Unlocker zone (default: `mcp_unlocker`) |
-| `BRIGHTDATA_SERP_ZONE` | SERP zone (default: `serp_api1`) |
+| `BRIGHTDATA_WEB_UNLOCKER_ZONE` | Web Unlocker zone |
+| `BRIGHTDATA_SERP_ZONE` | SERP zone |
 | `BRIGHTDATA_BROWSER_WS` | Scraping Browser WSS endpoint |
-| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay Test Mode key ID (`rzp_test_…`) |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay Test Mode key ID |
 | `RAZORPAY_KEY_SECRET` | Razorpay key secret (server only) |
-| `RAZORPAY_WEBHOOK_SECRET` | Razorpay webhook secret (server only, ≥32 chars) |
+| `RAZORPAY_WEBHOOK_SECRET` | Razorpay webhook secret (server only) |
+
+</details>
+
+---
+
+## Testing
+
+```bash
+npm run typecheck   # 0 errors
+npm run lint        # 0 errors
+npm test            # 507 passing, 53 files
+npm run build       # success
+npm run smoke:razorpay  # live Razorpay test-mode order (creds required)
+```
+
+Test coverage: HMAC (checkout + webhook), policy engine (8 checks), catalog schema, growth scorecard, audit service, extended funnel, product catalog, env predicates.
+
+---
 
 ## License
 
