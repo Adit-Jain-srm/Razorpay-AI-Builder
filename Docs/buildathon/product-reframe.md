@@ -23,315 +23,251 @@ Indian D2C digital + physical-adjacent: **AarogyaFit**.
 | `AAROGYA-NUTR` | Nutrition add-on guide | ₹499 (49900 paise) | Upsell |
 | `AAROGYA-BUNDLE` | Program + nutrition | ₹1,799 (179900 paise) | Cross-sell bundle |
 
-"Retirement Income Weekly" stays as a second seeded campaign. AarogyaFit is the golden-path default.
-
 ---
 
 ## Video script (screen-by-screen)
 
-Format: screen recording with voiceover narration. ~130 words/minute speaking pace.
-Target length: ~7 minutes.
+Screen recording + voiceover. Speak naturally, not fast. ~7 minutes.
 
 ---
 
-### Beat 1 — HOOK (0:00-0:30)
+### 1 — Open on the product (0:00-0:25)
 
-**Screen:** Browser tab open to `mediaos-kappa.vercel.app`. Command Center visible.
+**Screen:** `mediaos-kappa.vercel.app` — Command Center already loaded.
 
 **Say:**
-"Small Indian merchants have no media team, no agentic checkout, and no way to make their products sellable to AI buyers. 2026 is the year of the protocol race — NPCI is building the Unified Agent Protocol for UPI, OpenAI and Stripe launched the Agentic Commerce Protocol, Google has AP2, Coinbase has x402. Merchants need a tool to participate. I built one. This is MediaOS — an autonomous AI growth agent that closes the loop from audience research to Razorpay rupee, with a policy engine and audit trail on every money action."
+"Okay so this is MediaOS. I built this for Track 01. The idea is pretty simple — a small Indian merchant, say someone selling a fitness program, they don't have a marketing team. They don't have an agentic checkout. And with UAP, ACP, AP2 happening right now, they need a way to make their products buyable by AI agents too, not just humans.
 
-**Track 01 bar:** Problem taste.
+So I built an agent that does the whole thing — research to Razorpay payment. Let me walk you through it."
 
 ---
 
-### Beat 2 — SOLUTION + ARCHITECTURE (0:30-0:50)
+### 2 — Command Center walkthrough (0:25-1:00)
 
-**Screen:** Show the architecture diagram from the README (scroll to the Mermaid diagram). Highlight: Operator (25 tools) → Policy Engine → Razorpay Test Mode → Audit Trail.
+**Screen:** Still on `/`. Mouse over each section as you talk.
 
 **Say:**
-"MediaOS is a Next.js 16 app with 25 typed agent tools, a deterministic policy engine that gates every money action, Razorpay test-mode Standard Checkout, dual HMAC verification, and an append-only audit trail. The AI proposes. The policy decides. The audit proves it. Let me show you everything."
+"This is the Command Center. Up here is the Morning Brief — it runs anomaly detection on campaign metrics overnight, z-score based, and gives you the top three things to act on. Scale this, pause that, reallocate here.
 
-**Track 01 bar:** Build quality.
+These are the live stats — impressions, clicks, conversions, spend. And down here is the active campaign card with quick links into every module. Research, Creatives, Landing Pages, Analytics — all one click.
+
+But the real surface is the Operator. Let me show you that first."
 
 ---
 
-### Beat 3 — COMMAND CENTER (0:50-1:30)
+### 3 — Operator: what can it do? (1:00-1:40)
 
-**Screen:** `mediaos-kappa.vercel.app/` — the Command Center.
+**Screen:** Click into `/operator`. Type the prompt.
 
-**Walk through:**
-1. Point to the **Morning Brief** card — anomaly detection + recommended actions.
-2. Point to the **StatsGrid** — impressions, clicks, conversions, spend with animated counters.
-3. Point to the **Quick Actions** — Open the Operator, Run Audience Research.
-4. Point to the **Campaign Card** — links to Research, Creatives, Landing Pages, Analytics.
+**Prompt:** "What can you do right now, and what is coming soon?"
 
 **Say:**
-"The Command Center is the merchant's cockpit. Morning Brief tells you what happened overnight — it runs z-score anomaly detection and surfaces the top recommended actions. Stats show the pulse. Quick actions get you into the agent or the research engine. Every module is one click away."
+"So this is the Operator — the main agent. Let me ask it what it can do."
 
-**Track 01 bar:** Build quality.
+*(Wait for response to render)*
+
+"So there's 25 tools here, across seven categories. Research, campaigns, creatives, landing pages, analytics, payments, commerce. Each one is Zod-validated — the model can't hallucinate parameters, they get rejected. And every tool is wrapped in a fail-safe boundary, so if something throws, the agent recovers instead of crashing.
+
+This isn't a chatbot wrapper. It runs a plan-execute-observe loop — it makes a plan, calls tools, reads the results, and adapts. Let me show you the full golden path."
 
 ---
 
-### Beat 4 — OPERATOR CAPABILITIES (1:30-2:00)
+### 4 — Operator golden path (1:40-2:40)
 
-**Screen:** Navigate to `/operator`. Type the prompt.
+**Screen:** Still in `/operator`. Type the prompt.
 
-**Prompt to type:** "What can you do right now, and what is coming soon?"
-
-**Walk through:**
-1. The Operator responds with a structured list of all 25 capabilities across 7 categories: **research** (research_audience, get_personas), **campaign** (create_campaign, recommend_platforms, suggest_budget, list_campaigns, get_campaign), **creative** (generate_creatives, score_creative, regenerate_creative), **landing** (build_landing_page, deploy_landing_page), **analytics** (get_performance_summary, detect_anomalies, get_recommendations, daily_brief, proactive_briefing), **payments** (reallocate_budget, get_growth_scorecard, explain_money_action), **commerce** (create_checkout_session, list_catalog, recommend_upsells, add_product, remove_product).
-2. Let the list render fully so judges can see the breadth.
+**Prompt:** "Launch an AarogyaFit campaign targeting fitness-conscious 22-35 year olds in India. Research the audience, create Meta creatives, build and deploy a landing page with Razorpay checkout."
 
 **Say:**
-"Twenty-five tools across seven modules. Research, campaigns, creatives, landing pages, analytics, payments, and commerce. Every one is Zod-validated, fail-safe, and returns typed artifacts. This isn't a wrapper around a chat API — it's a real tool-calling agent with a plan-execute-observe loop."
+"One prompt. Watch what happens."
 
-**Track 01 bar:** Build quality (25 typed tools, not a chatbot).
+*(Let tools stream — narrate as they fire)*
+
+"It's researching the audience first — six Bright Data providers running in parallel. Search intent, Reddit, competitor ads, news... okay, now it's creating the campaign from that research. INR budget. Sales objective. Now creatives — these are Meta ad variants, each one gets a hook classification and a score.
+
+Now it's building the landing page... deploying it... and setting up the Razorpay checkout session. There's the payment link."
+
+**Fallback:** If Azure is slow or offline, say: "The agent needs Azure to run live, so let me show you the seeded version that's already deployed." Navigate to `/lp/aarogya-fit`.
 
 ---
 
-### Beat 5 — RESEARCH ENGINE (2:00-2:30)
+### 5 — Quick tour: Research, Campaigns, Creatives (2:40-3:20)
 
-**Screen:** Navigate to `/research`. Click into the seeded research project.
-
-**Walk through:**
-1. Show the **Research Workspace** — persona cards, pain points with real quotes, competitor ad angles, source citations.
-2. Point to the **6 Bright Data providers** — search intent, communities, competitor ads, news, social, web intelligence.
-3. Point to **source citations** — every claim is cited from live web data.
+**Screen:** Click through `/research` → `/campaigns` → `/creatives` quickly.
 
 **Say:**
-"The research engine is the moat. Six Bright Data providers run in parallel — search intent, community discussions, competitor ads, news, social signals, and web intelligence. The output is synthesized into cited personas, ranked pain points in the audience's own words, and competitor angles. This grounds everything downstream."
+"Let me quickly show you the modules the agent just used.
 
-**Track 01 bar:** AI judgment.
+Research — here are the personas it generated. Real pain points in the audience's own words. Competitor ad angles. And everything is cited — you can see the source URLs. It doesn't hallucinate research, it aggregates from live data.
+
+Campaigns — here's the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR.
+
+Creatives — platform-ready ad variants. Each one is classified by psychological hook — fear, curiosity, FOMO, social proof, urgency, exclusivity — and scored 0 to 100 for direct-response quality. If one scores low, you regenerate it."
 
 ---
 
-### Beat 6 — CAMPAIGNS + CREATIVES (2:30-3:00)
+### 6 — Landing pages and the editor (3:20-3:50)
 
-**Screen:** Navigate to `/campaigns` → click the demo campaign. Then navigate to `/creatives`.
-
-**Walk through:**
-1. **Campaign Hub** — brief with objective, value props, audience personas, platform split, INR budget.
-2. **Creative Studio** — platform-specific ad variants (Meta, Google, TikTok), scored 0-100 for direct-response quality.
-3. **Hook classification** — fear, curiosity, FOMO, social proof, urgency, exclusivity.
-4. **Regenerate** — one-click regeneration for low scorers.
+**Screen:** Navigate to `/landing-pages`. Click into a page.
 
 **Say:**
-"Campaigns link research to execution. The creative studio generates platform-ready ad variants, each classified by psychological hook and scored for direct-response quality. Low scorers get regenerated. The Operator can do all of this autonomously."
+"Landing pages. Three seeded pages here — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants that split traffic 50/50.
 
-**Track 01 bar:** Build quality.
+The editor has 14 section types — hero, social proof, testimonials, FAQ, countdown timer, quiz funnel, lead form, exit intent popup, and the checkout section with Razorpay. Five templates to start from. Every generated page gets a checkout section by default now — the SKU and price come from the product catalog, not hardcoded."
 
 ---
 
-### Beat 7 — LANDING PAGES + EDITOR (3:00-3:40)
+### 7 — Live payment (3:50-4:30)
 
-**Screen:** Navigate to `/landing-pages`. Click into a page to show the editor.
-
-**Walk through:**
-1. **Landing Manager** — three seeded pages: AarogyaFit with checkout, two retirement A/B variants. Five templates.
-2. **Editor** — live preview of 14 section types: hero, rich text, features, social proof, testimonials, listicle, FAQ, countdown, quiz, lead form, exit intent, CTA, checkout, compliance.
-3. **A/B testing** — weighted traffic splits. Retirement campaign has two variants.
-4. **Checkout section** — Razorpay Checkout baked in by default, SKU resolved from catalog.
+**Screen:** Open `/lp/aarogya-fit` (the deployed page).
 
 **Say:**
-"The landing page engine has 14 section types, five templates, built-in A/B testing, and Razorpay Checkout baked into every generated page. This is what the buyer sees and pays on. Let me show you the Operator building one from scratch."
+"Okay, here's the actual page a buyer sees. Hero, features, social proof... and here's the checkout section.
 
-**Track 01 bar:** Build quality.
+Notice the order summary — product name, price, Pay button, and trust signals. The price is resolved server-side from the product catalog. The client never sends an amount — that's a security decision. Server-priced SKUs.
+
+Let me pay."
+
+*(Click Pay. Razorpay modal opens. Enter test card.)*
+
+"Test card, any expiry, any CVV..."
+
+*(Payment completes. Redirected to thanks page.)*
+
+"And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. This is pulled from the server-side order store, not just query parameters. There's even a receipt email simulation down here. Real payment loop."
 
 ---
 
-### Beat 8 — OPERATOR GOLDEN PATH (3:40-4:30)
+### 8 — Failure and the stop-rule (4:30-5:00)
 
-**Screen:** Back to `/operator`. Type the prompt.
-
-**Prompt to type:**
-"Launch an AarogyaFit campaign targeting fitness-conscious 22-35 year olds in India. Research the audience, create Meta creatives, build and deploy a landing page with Razorpay checkout."
-
-**Walk through:**
-1. Agent creates a **plan** — visible steps in the chat.
-2. Tools fire in sequence: `research_audience` → `create_campaign` → `generate_creatives` → `build_landing_page` → `deploy_landing_page` → `create_checkout_session`.
-3. Artifacts appear: research report, campaign, creative set, landing page card, checkout session with payment link.
-4. Agent returns a checkout URL.
+**Screen:** Go back to `/lp/aarogya-fit`. Click Pay again.
 
 **Say:**
-"One prompt. The Operator researches the audience, creates the campaign, generates creatives, builds a landing page, deploys it live, and sets up Razorpay checkout. Every tool streams live. The golden path runs end to end — from research to payment-ready in one conversation."
+"Now let me show you what happens when payment fails. I'll use the Razorpay test UPI — `failure@razorpay`."
 
-**Fallback:** If Azure is slow, navigate directly to `/lp/aarogya-fit` and say "Let me show the seeded AarogyaFit page the Operator generated."
+*(Enter failure@razorpay or select Failure in mock bank. Payment fails. Redirected to failed page.)*
 
-**Track 01 bar:** All.
+"So look at this. It doesn't just say 'try again.' There's a stop-rule — 'This order will not be retried. The policy engine prevents automatic retries after a failed payment.' And this card at the bottom — 'Every money action is auditable, this failure has been logged.'
 
----
-
-### Beat 9 — LIVE PAYMENT (4:30-5:00)
-
-**Screen:** Open the deployed landing page (from the Operator result, or `/lp/aarogya-fit`).
-
-**Walk through:**
-1. Scroll the page — hero, features, social proof, testimonials, FAQ.
-2. Scroll to the **checkout section** — order summary, price ₹1,499, trust signals.
-3. Click **Pay** — Razorpay modal opens with prefilled test data.
-4. Enter test card `4111 1111 1111 1111`, any expiry, any CVV.
-5. Payment succeeds → redirected to thanks page.
-6. Show the **thanks page** — order receipt with product, order ID, Razorpay IDs, payment ID, amount, status, timestamp, plus simulated email confirmation.
-
-**Say:**
-"Real Razorpay Standard Checkout on a deployed page. Server-priced — the client never sets the amount. Dual HMAC-verified. The thanks page pulls real order data from the server store — product, IDs, amount, status, and a receipt email simulation. This is a real payment loop, not a mock."
-
-**Track 01 bar:** Bounded + gated.
+If you want to buy again, it's a new order with a new mandate. The failed one stays failed. That's the Track 01 bar — one failure handled gracefully."
 
 ---
 
-### Beat 10 — FAILURE DEMO (5:00-5:30)
-
-**Screen:** Go back to the landing page. Click Pay again.
-
-**Walk through:**
-1. In the Razorpay modal, use UPI `failure@razorpay` or select Failure in the mock bank.
-2. Payment fails → redirected to failed page.
-3. Show the **failed page** — stop-rule message, Track 01 compliance card with ShieldWarning.
-
-**Say:**
-"Payment failed. The system enforces a stop-rule — the failed order is logged, and the policy engine will not retry it. A new checkout creates a new order with a fresh mandate. This is the Track 01 bar: graceful failure handling. Every failure is auditable."
-
-**Track 01 bar:** Failure handled gracefully.
-
----
-
-### Beat 11 — CATALOG API (5:30-5:50)
+### 9 — The catalog API (5:00-5:20)
 
 **Screen:** Open `mediaos-kappa.vercel.app/api/commerce/catalog` in a new tab.
 
-**Walk through:**
-1. Show the JSON — three products, INR, `is_eligible_checkout: true`, upsell/cross-sell graphs, checkout endpoints.
-2. Point to `create_order` and `create_session` — programmatic purchase paths.
-
 **Say:**
-"The catalog is machine-readable — inspired by OpenAI's Agentic Commerce Protocol. Products, prices in paise, availability, upsell graph, and checkout endpoints. An AI buyer can discover products and transact programmatically. That's the second Track 01 clause — making the merchant transactable by AI buyers."
+"This is the other side of Track 01 — making the merchant transactable by AI buyers.
 
-**Track 01 bar:** Agent-readable catalog.
+This is the product catalog API, inspired by OpenAI's Agentic Commerce Protocol. Three products, prices in integer paise, availability, upsell and cross-sell graphs, and checkout endpoints. An AI agent can hit this, discover products, check eligibility, and create a checkout session programmatically. The merchant is sellable to both humans and AI."
 
 ---
 
-### Beat 12 — SCORECARD + REALLOCATION (5:50-6:15)
+### 10 — Growth scorecard and budget reallocation (5:20-5:50)
 
 **Screen:** Back to `/operator`.
 
 **Prompt 1:** "Show the growth scorecard"
 **Prompt 2:** "Shift 15% budget from audience C to B — C has 2x higher CPA"
 
-**Walk through:**
-1. **Growth scorecard** — per-audience CTR, CVR, CPA, GMV, orders, spend. Audience B wins.
-2. **Reallocation** — policy checks currency, reason, mandate. Allowed. Audit event written.
-
 **Say:**
-"The Operator optimizes. Growth scorecard shows per-audience performance. Budget reallocation is policy-gated — the LLM proposes, the deterministic engine decides, and the mandate is logged. Every reallocation is explainable, bounded, and audited."
+"Okay so the agent doesn't just launch — it optimizes.
 
-**Track 01 bar:** Explainable + bounded + gated.
+Growth scorecard — CTR, CVR, CPA, GMV per audience. B is clearly the winner here, lowest CPA. C is burning budget.
+
+So I'll tell it to reallocate."
+
+*(Type the reallocation prompt)*
+
+"It checks policy — is the currency INR? Is the reason long enough? Does it need a mandate? All pass. Budget shifted. Audit event written. The LLM proposed it, but the deterministic policy engine decided. That's the split — AI does research and copy, policy does money."
 
 ---
 
-### Beat 13 — AUDIT TRAIL (6:15-6:40)
+### 11 — Audit trail (5:50-6:10)
 
 **Screen:** Still in the Operator.
 
-**Prompt:** "Show the full audit trail for this campaign"
-
-**Walk through:**
-1. Audit timeline — order_created, payment_captured, payment_failed, budget_reallocated, product_added, mandate_denied. All with timestamp, actor, reason, outcome.
-2. Point to a denied mandate and a failed payment stop-rule.
+**Prompt:** "Show the full audit trail"
 
 **Say:**
-"This is the audit trail. Every money action logged — who did it, why, and what happened. Allowed or denied. Captured or failed. Fifteen action types. The judge doesn't need to replay the conversation — they can read the ledger."
+"And here's every money action that happened. Order created, payment captured, payment failed, budget reallocated, product added, mandate denied — each one with a timestamp, who did it, why, and whether it was allowed or not.
 
-**Track 01 bar:** Audit trail shown.
+See this denied one? Reason was too short — policy rejected it. And here's the failed payment with the stop-rule. Fifteen action types total. The judge doesn't need to replay the chat — the ledger tells the whole story."
 
 ---
 
-### Beat 14 — ANALYTICS (6:40-7:00)
+### 12 — Analytics (6:10-6:35)
 
 **Screen:** Navigate to `/analytics` → click into the campaign.
 
-**Walk through:**
-1. Portfolio overview — total spend, conversions, ROAS.
-2. Campaign funnel — Impressions → Clicks → LP Views → Checkout Started → Paid.
-3. Anomaly detection — z-score analysis, CPA spike flagged.
-4. AI daily brief — one-paragraph summary with recommended next action.
-
 **Say:**
-"Analytics closes the feedback loop. The funnel tracks from impressions to Razorpay-paid orders. Anomaly detection flags spikes. The AI daily brief synthesizes everything. And the recommendations feed right back into the Operator."
+"Last module — analytics. Portfolio overview up top. Click into the campaign and you get the full picture.
 
-**Track 01 bar:** Build quality.
+The funnel goes from impressions all the way down to Razorpay-paid orders. Platform breakdown, creative correlation — which ad is actually converting. Anomaly detection flags weird spikes. And the AI daily brief summarizes everything in one paragraph with a recommended next action. This feeds back into the Operator — it's a loop."
 
 ---
 
-### Beat 15 — CLOSE: README + DOCS (7:00-7:30)
+### 13 — Close on the repo (6:35-7:00)
 
-**Screen:** Open the GitHub repo `github.com/Adit-Jain-srm/Razorpay-AI-Builder`. Scroll the README slowly.
-
-**Walk through:**
-1. Point to the **Track 01 Bar Compliance** table — explainable, bounded, gated, audit, failure.
-2. Point to the **Architecture** mermaid diagram.
-3. Point to the **Documentation** table — highlight key docs:
-   - `Docs/payments.md` — Razorpay integration, policy engine, HMAC, audit trail
-   - `Docs/operator-tools.md` — 25-tool catalog with golden path
-   - `Docs/buildathon/track-01-bar.md` — money-action taxonomy, failure matrix
-   - `Docs/buildathon/protocols.md` — UAP, ACP, AP2, x402 context
-   - `Docs/architecture.md` — system diagrams, data model
-4. Point to the **Testing** section — 507 tests, 0 errors.
-5. Scroll to **What broke and how it was fixed** — "The full postmortem is here in the README for you to read."
+**Screen:** Open `github.com/Adit-Jain-srm/Razorpay-AI-Builder`. Scroll the README.
 
 **Say:**
-"Everything is documented. The README has Track 01 compliance, architecture, and a full postmortem. The Docs folder has deep dives on payments, the operator's 25 tools, the protocol context, and the failure matrix. 507 tests. Zero type errors. The repo is the submission — judges, dig in.
+"Everything is in the repo. Track 01 compliance table right here — explainable, bounded, gated, audit, failure, all checked.
 
-MediaOS doesn't just generate marketing. It closes the loop between acquisition and payment. The merchant is transactable — by humans and by AI buyers. Built on Razorpay. Thank you."
+For judges who want to dig deeper — Docs/payments.md covers the full Razorpay integration, policy engine, and HMAC. Docs/operator-tools.md has the 25-tool catalog. The buildathon folder has the track bar decoded, the protocol context, the failure matrix. And the full 'what broke' postmortem is here in the README — seven incidents, all with root cause and fix.
 
-**Track 01 bar:** All (closing statement ties everything together).
+507 tests. Zero type errors. 14 section types. 15 audit actions. 25 agent tools. 3 products in the catalog. Dual HMAC. Integer paise everywhere.
+
+MediaOS closes the gap between acquisition and payment. The merchant is transactable. Built on Razorpay. Thanks for watching."
 
 ---
 
 ## Pure script (voiceover only)
 
-Copy this section into your teleprompter or read it while recording. No stage directions — just what to say.
+Read this while recording. No stage directions.
 
 ---
 
-Small Indian merchants have no media team, no agentic checkout, and no way to make their products sellable to AI buyers. 2026 is the year of the protocol race — NPCI is building the Unified Agent Protocol for UPI, OpenAI and Stripe launched the Agentic Commerce Protocol, Google has AP2, Coinbase has x402. Merchants need a tool to participate. I built one. This is MediaOS — an autonomous AI growth agent that closes the loop from audience research to Razorpay rupee, with a policy engine and audit trail on every money action.
+Okay so this is MediaOS. I built this for Track 01. The idea is pretty simple — a small Indian merchant, say someone selling a fitness program, they don't have a marketing team. They don't have an agentic checkout. And with UAP, ACP, AP2 happening right now, they need a way to make their products buyable by AI agents too, not just humans. So I built an agent that does the whole thing — research to Razorpay payment. Let me walk you through it.
 
-MediaOS is a Next.js 16 app with 25 typed agent tools, a deterministic policy engine that gates every money action, Razorpay test-mode Standard Checkout, dual HMAC verification, and an append-only audit trail. The AI proposes. The policy decides. The audit proves it. Let me show you everything.
+This is the Command Center. Up here is the Morning Brief — it runs anomaly detection on campaign metrics overnight, z-score based, and gives you the top three things to act on. Scale this, pause that, reallocate here. These are the live stats — impressions, clicks, conversions, spend. And down here is the active campaign card with quick links into every module. But the real surface is the Operator. Let me show you that first.
 
-The Command Center is the merchant's cockpit. Morning Brief tells you what happened overnight — it runs z-score anomaly detection and surfaces the top recommended actions. Stats show the pulse. Quick actions get you into the agent or the research engine. Every module is one click away.
+So this is the Operator — the main agent. Let me ask it what it can do.
 
-Let me show you what the Operator can do. Twenty-five tools across seven modules. Research, campaigns, creatives, landing pages, analytics, payments, and commerce. Every one is Zod-validated, fail-safe, and returns typed artifacts. This isn't a wrapper around a chat API — it's a real tool-calling agent with a plan-execute-observe loop.
+So there's 25 tools here, across seven categories. Research, campaigns, creatives, landing pages, analytics, payments, commerce. Each one is Zod-validated — the model can't hallucinate parameters, they get rejected. And every tool is wrapped in a fail-safe boundary, so if something throws, the agent recovers instead of crashing. This isn't a chatbot wrapper. It runs a plan-execute-observe loop — it makes a plan, calls tools, reads the results, and adapts. Let me show you the full golden path.
 
-The research engine is the moat. Six Bright Data providers run in parallel — search intent, community discussions, competitor ads, news, social signals, and web intelligence. The output is synthesized into cited personas, ranked pain points in the audience's own words, and competitor angles. This grounds everything downstream.
+One prompt. Watch what happens.
 
-Campaigns link research to execution. The creative studio generates platform-ready ad variants, each classified by psychological hook and scored for direct-response quality. Low scorers get regenerated. The Operator can do all of this autonomously.
+It's researching the audience first — six Bright Data providers running in parallel. Search intent, Reddit, competitor ads, news... okay, now it's creating the campaign from that research. INR budget. Sales objective. Now creatives — these are Meta ad variants, each one gets a hook classification and a score. Now it's building the landing page... deploying it... and setting up the Razorpay checkout session. There's the payment link.
 
-The landing page engine has 14 section types, five templates, built-in A/B testing, and Razorpay Checkout baked into every generated page. This is what the buyer sees and pays on. Let me show you the Operator building one from scratch.
+Let me quickly show you the modules the agent just used. Research — here are the personas it generated. Real pain points in the audience's own words. Competitor ad angles. And everything is cited — it doesn't hallucinate research, it aggregates from live data. Campaigns — the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR. Creatives — platform-ready ad variants. Each one classified by psychological hook and scored 0 to 100. If one scores low, you regenerate it.
 
-One prompt. The Operator researches the audience, creates the campaign, generates creatives, builds a landing page, deploys it live, and sets up Razorpay checkout. Every tool streams live. The golden path runs end to end — from research to payment-ready in one conversation.
+Landing pages. Three seeded pages here — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants that split traffic 50/50. The editor has 14 section types. Five templates. Every generated page gets a checkout section by default — the SKU and price come from the product catalog, not hardcoded.
 
-Real Razorpay Standard Checkout on a deployed page. Server-priced — the client never sets the amount. Dual HMAC-verified. The thanks page pulls real order data from the server store — product, IDs, amount, status, and a receipt email simulation. This is a real payment loop, not a mock.
+Okay, here's the actual page a buyer sees. Hero, features, social proof... and here's the checkout section. Notice the order summary — product name, price, Pay button, trust signals. The price is resolved server-side. The client never sends an amount — server-priced SKUs. Let me pay.
 
-Payment failed. The system enforces a stop-rule — the failed order is logged, and the policy engine will not retry it. A new checkout creates a new order with a fresh mandate. This is the Track 01 bar: graceful failure handling. Every failure is auditable.
+Test card, any expiry, any CVV...
 
-The catalog is machine-readable — inspired by OpenAI's Agentic Commerce Protocol. Products, prices in paise, availability, upsell graph, and checkout endpoints. An AI buyer can discover products and transact programmatically. That's the second Track 01 clause — making the merchant transactable by AI buyers.
+And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. Pulled from the server-side order store, not just query parameters. Receipt email simulation. Real payment loop.
 
-The Operator optimizes. Growth scorecard shows per-audience performance. Budget reallocation is policy-gated — the LLM proposes, the deterministic engine decides, and the mandate is logged. Every reallocation is explainable, bounded, and audited.
+Now let me show you what happens when payment fails. I'll use the test UPI — failure@razorpay.
 
-This is the audit trail. Every money action logged — who did it, why, and what happened. Allowed or denied. Captured or failed. Fifteen action types. The judge doesn't need to replay the conversation — they can read the ledger.
+So look at this. It doesn't just say "try again." There's a stop-rule — this order will not be retried. The policy engine prevents automatic retries after a failed payment. And this card — every money action is auditable, this failure has been logged. If you want to buy again, it's a new order with a new mandate. The failed one stays failed. That's one failure handled gracefully.
 
-Analytics closes the feedback loop. The funnel tracks from impressions to Razorpay-paid orders. Anomaly detection flags spikes. The AI daily brief synthesizes everything. And the recommendations feed right back into the Operator.
+This is the product catalog API, inspired by OpenAI's Agentic Commerce Protocol. Three products, prices in integer paise, availability, upsell and cross-sell graphs, checkout endpoints. An AI agent can hit this, discover products, and create a checkout session programmatically. The merchant is sellable to both humans and AI.
 
-Everything is documented. The README has Track 01 compliance, architecture, and a full postmortem. The Docs folder has deep dives on payments, the operator's 25 tools, the protocol context, and the failure matrix. 507 tests. Zero type errors. The repo is the submission — judges, dig in.
+The agent doesn't just launch — it optimizes. Growth scorecard — CTR, CVR, CPA, GMV per audience. B is the winner, lowest CPA. C is burning budget. So I'll tell it to reallocate. It checks policy — is the currency INR? Reason long enough? Mandate required? All pass. Budget shifted. Audit event written. The LLM proposed it, but the deterministic policy engine decided. AI does research and copy. Policy does money.
 
-MediaOS doesn't just generate marketing. It closes the loop between acquisition and payment. The merchant is transactable — by humans and by AI buyers. Built on Razorpay. Thank you.
+And here's every money action that happened. Order created, payment captured, payment failed, budget reallocated, product added, mandate denied — each one with timestamp, actor, reason, outcome. See this denied one? Reason was too short — policy rejected it. Fifteen action types. The judge doesn't need to replay the chat — the ledger tells the story.
+
+Last module — analytics. The funnel goes from impressions to Razorpay-paid orders. Platform breakdown, creative correlation. Anomaly detection flags spikes. The AI daily brief summarizes everything with a recommended next action. It feeds back into the Operator — the whole thing is a loop.
+
+Everything is in the repo. Track 01 compliance table, architecture diagram, full documentation. For judges who want to dig deeper — payments.md covers Razorpay and HMAC, operator-tools.md has the 25-tool catalog, the buildathon folder has the track bar decoded and the protocol context. The full "what broke" postmortem is in the README — seven incidents with root cause and fix. 507 tests. Zero type errors. MediaOS closes the gap between acquisition and payment. The merchant is transactable. Built on Razorpay. Thanks for watching.
 
 ---
 
 ## Judge click-path (standalone, zero setup)
-
-If the judge wants to explore without watching the video:
 
 1. Open https://mediaos-kappa.vercel.app — Command Center
 2. Open https://mediaos-kappa.vercel.app/lp/aarogya-fit — pay with test card `4111 1111 1111 1111`
@@ -343,4 +279,4 @@ If the judge wants to explore without watching the video:
 8. Ask "Show the audit trail" → every money action with reasons
 9. Test failure: on `/lp/aarogya-fit`, use UPI `failure@razorpay` → stop-rule
 10. Navigate: Research → Campaigns → Creatives → Landing Pages → Analytics
-11. GitHub: https://github.com/Adit-Jain-srm/Razorpay-AI-Builder — read README + Docs/
+11. GitHub: https://github.com/Adit-Jain-srm/Razorpay-AI-Builder — README + Docs/
