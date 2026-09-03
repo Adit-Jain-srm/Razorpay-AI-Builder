@@ -12,6 +12,7 @@ import { z } from "zod";
 import type { AgentTool } from "../types";
 import { defineTool } from "../types";
 import { runToolSafely, ok } from "./shared";
+import { storeOrder } from "@/lib/payments/orders";
 import { getAllProducts, getProduct, upsertProduct, removeProduct } from "@/lib/payments/products";
 import {
   buildGrowthScorecard,
@@ -178,6 +179,26 @@ export function createCommerceTools(): AgentTool[] {
           ?? (product.sku.startsWith("AAROGYA") ? "aarogya-fit" : product.sku.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
         const checkoutUrl = `/lp/${slug}`;
         const catalogUrl = `/api/commerce/catalog`;
+        const now = new Date().toISOString();
+
+        // Persist to order store so the thanks/failed pages can look it up
+        storeOrder({
+          orderId,
+          razorpayOrderId: null,
+          razorpayPaymentId: null,
+          sku: params.sku,
+          productTitle: product.title,
+          amountPaise: product.amountPaise,
+          currency: "INR",
+          receipt: `mediaos_${orderId.slice(0, 8)}`,
+          items: [{ sku: params.sku, amountPaise: product.amountPaise, role: "primary" }],
+          status: "created",
+          mode: "demo",
+          campaignId: params.campaignId ?? null,
+          landingPageId: null,
+          createdAt: now,
+          updatedAt: now,
+        });
 
         writeAudit({
           actor: "operator",
@@ -308,7 +329,7 @@ export function createCommerceTools(): AgentTool[] {
 
         writeAudit({
           actor: "operator",
-          action: "campaign_activated",
+          action: "product_added",
           reason: `Product ${product.sku} added/updated: ${product.title} at ₹${(product.amountPaise / 100).toLocaleString("en-IN")}`,
           ok: true,
           afterState: { sku: product.sku, amountPaise: product.amountPaise },
@@ -335,7 +356,7 @@ export function createCommerceTools(): AgentTool[] {
 
         writeAudit({
           actor: "operator",
-          action: "campaign_activated",
+          action: "product_removed",
           reason: `Product ${params.sku} removed from catalog`,
           ok: true,
           afterState: { sku: params.sku, removed: true },

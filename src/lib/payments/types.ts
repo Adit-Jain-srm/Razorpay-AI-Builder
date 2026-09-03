@@ -76,6 +76,8 @@ export type AuditAction =
   | "upsell_applied"
   | "upsell_rejected"
   | "campaign_activated"
+  | "product_added"
+  | "product_removed"
   | "signature_invalid";
 
 export interface AuditEntry {

@@ -366,18 +366,48 @@ function exitIntentSection(d: DerivedCopy, copy: LandingCopySpec): LandingSectio
 
 /** Razorpay Checkout section — included by default in all generated pages (Wave 7 Track 01). */
 function checkoutSection(d: DerivedCopy): LandingSection {
+  // Try to resolve the product from the catalog by matching the context's productName.
+  // Falls back to AAROGYA-12W (the canonical demo SKU) when no match is found.
+  const resolved = resolveCheckoutProduct(d.product);
   return {
     id: sectionId("checkout"),
     type: "checkout",
     label: "Razorpay Checkout",
     headline: `Get ${d.product} now`,
     subtitle: "Secure payment powered by Razorpay. Test mode — no real money charged.",
-    sku: "AAROGYA-12W",
-    ctaLabel: `Pay ₹1,499 — Start now`,
+    sku: resolved.sku,
+    ctaLabel: `Pay ${resolved.priceLabel} — Start now`,
     showUpsells: false,
     successPath: "thanks",
     failurePath: "failed",
   };
+}
+
+/** Match a product name to the catalog. Picks exact title match, then substring, then default. */
+function resolveCheckoutProduct(productName: string): { sku: string; priceLabel: string } {
+  // Lazy import to avoid pulling server module into client bundle during SSR static analysis.
+  // This function only runs server-side in the template builder.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getAllProducts } = require("@/lib/payments/products") as typeof import("@/lib/payments/products");
+    const products = getAllProducts();
+    const normalized = productName.toLowerCase().trim();
+
+    // Exact title match
+    const exact = products.find((p) => p.title.toLowerCase() === normalized);
+    if (exact) return { sku: exact.sku, priceLabel: `₹${(exact.amountPaise / 100).toLocaleString("en-IN")}` };
+
+    // Substring match (e.g. "AarogyaFit 12-Week Program" contains "aarogyafit")
+    const partial = products.find((p) =>
+      normalized.includes(p.title.toLowerCase().slice(0, 10)) ||
+      p.title.toLowerCase().includes(normalized.slice(0, 10)),
+    );
+    if (partial) return { sku: partial.sku, priceLabel: `₹${(partial.amountPaise / 100).toLocaleString("en-IN")}` };
+  } catch {
+    // Module unavailable (client-side static analysis) — fall through to default
+  }
+
+  return { sku: "AAROGYA-12W", priceLabel: "₹1,499" };
 }
 
 function complianceSection(disclaimers: string[]): ComplianceSection {

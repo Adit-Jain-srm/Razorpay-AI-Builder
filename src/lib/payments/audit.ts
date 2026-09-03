@@ -85,6 +85,8 @@ const ACTION_LABELS: Record<AuditAction, string> = {
   upsell_applied: "Upsell applied",
   upsell_rejected: "Upsell rejected",
   campaign_activated: "Campaign activated",
+  product_added: "Product added",
+  product_removed: "Product removed",
   signature_invalid: "Signature invalid",
 };
 
