@@ -10,6 +10,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { Lock, ShieldCheck } from "@phosphor-icons/react";
 
 declare global {
   interface Window {
@@ -22,6 +23,9 @@ declare global {
 
 interface CheckoutButtonProps {
   sku: string;
+  slug?: string;
+  productTitle?: string;
+  amountPaise?: number;
   landingPageId?: string;
   campaignId?: string;
   ctaLabel?: string;
@@ -30,6 +34,9 @@ interface CheckoutButtonProps {
 
 export function CheckoutButton({
   sku,
+  slug,
+  productTitle,
+  amountPaise,
   landingPageId,
   campaignId,
   ctaLabel = "Pay now",
@@ -40,6 +47,19 @@ export function CheckoutButton({
     typeof globalThis.window !== "undefined" && !!globalThis.window.Razorpay,
   );
   const [error, setError] = useState<string | null>(null);
+
+  const formatPrice = (value: number | undefined) =>
+    value === undefined
+      ? null
+      : new Intl.NumberFormat("en-IN", {
+          style: "currency",
+          currency: "INR",
+          maximumFractionDigits: 0,
+        }).format(value / 100);
+
+  const destinationSlug =
+    slug && slug.trim().length > 0 ? encodeURIComponent(slug.trim()) : undefined;
+  const formattedPrice = formatPrice(amountPaise);
 
   // Load Razorpay Checkout.js from CDN
   useEffect(() => {
@@ -83,7 +103,18 @@ export function CheckoutButton({
 
       // Demo mode: simulate success
       if (order.mode === "demo") {
-        window.location.href = `?order=${order.orderId}&demo=true&status=success`;
+        const amount = typeof order.amountPaise === "number" ? order.amountPaise : amountPaise;
+        if (!destinationSlug) {
+          setError("Missing page context. Please refresh and try again.");
+          setLoading(false);
+          return;
+        }
+        const params = new URLSearchParams({
+          order: String(order.orderId),
+          demo: "true",
+        });
+        if (typeof amount === "number") params.set("amount", String(amount));
+        window.location.href = `/lp/${destinationSlug}/thanks?${params.toString()}`;
         return;
       }
 
@@ -116,7 +147,17 @@ export function CheckoutButton({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           }).catch(() => {});
-          window.location.href = `?order=${order.orderId}&status=success`;
+          if (!destinationSlug) {
+            setError("Missing page context. Please refresh and try again.");
+            setLoading(false);
+            return;
+          }
+          const params = new URLSearchParams({
+            order: String(order.orderId),
+            rzp: String(order.razorpayOrderId),
+            amount: String(order.amountPaise),
+          });
+          window.location.href = `/lp/${destinationSlug}/thanks?${params.toString()}`;
         },
         modal: {
           ondismiss: () => setLoading(false),
@@ -127,7 +168,13 @@ export function CheckoutButton({
       });
 
       rzp.on("payment.failed", () => {
-        window.location.href = `?order=${order.orderId}&status=failed`;
+        if (!destinationSlug) {
+          setError("Missing page context. Please refresh and try again.");
+          setLoading(false);
+          return;
+        }
+        const params = new URLSearchParams({ order: String(order.orderId) });
+        window.location.href = `/lp/${destinationSlug}/failed?${params.toString()}`;
       });
 
       rzp.open();
@@ -135,23 +182,56 @@ export function CheckoutButton({
       setError("Something went wrong. Please try again.");
       setLoading(false);
     }
-  }, [sku, landingPageId, campaignId]);
+  }, [sku, landingPageId, campaignId, amountPaise, destinationSlug]);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <button
-        type="button"
-        onClick={handleCheckout}
-        disabled={loading || (!scriptLoaded && !error)}
-        className={`inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
-      >
-        {loading ? (
-          <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+    <div className="flex w-full flex-col items-stretch gap-3">
+      <div className="rounded-md border border-[var(--lp-border)] bg-[var(--lp-card)] p-3 text-left">
+        <p className="text-xs uppercase tracking-wide text-[var(--lp-muted)]">Order summary</p>
+        <p className="mt-1 text-sm font-semibold text-[var(--lp-card-fg)]">{productTitle ?? sku}</p>
+        {formattedPrice ? (
+          <p className="mt-1 text-lg font-bold text-[var(--lp-fg)]">{formattedPrice}</p>
         ) : null}
-        {ctaLabel}
-      </button>
+      </div>
+
+      {!scriptLoaded && !error ? (
+        <div
+          aria-hidden="true"
+          className="h-14 animate-pulse rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] motion-reduce:animate-none"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={handleCheckout}
+          disabled={loading}
+          className={`inline-flex h-14 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-8 text-lg font-semibold text-white shadow-lg transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        >
+          {loading ? (
+            <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent motion-reduce:animate-none" />
+          ) : null}
+          {ctaLabel}
+        </button>
+      )}
+
+      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-[var(--lp-muted)]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--lp-border)] bg-[var(--lp-card)] px-2.5 py-1">
+          <Lock className="size-3.5" />
+          Secure payment
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--lp-border)] bg-[var(--lp-card)] px-2.5 py-1">
+          <ShieldCheck className="size-3.5" />
+          Razorpay Test Mode
+        </span>
+      </div>
+
       {error ? (
-        <p className="text-sm text-red-500">{error}</p>
+        <div className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+          {error}{" "}
+          <a href="#pay" className="underline underline-offset-2">
+            Try again
+          </a>
+          .
+        </div>
       ) : null}
     </div>
   );

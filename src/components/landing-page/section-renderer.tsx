@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { CheckCircle, Play, ShieldCheck, Star } from "@phosphor-icons/react/dist/ssr";
 
 import { resolveThemeVars } from "@/lib/landing/theme";
+import { getProduct } from "@/lib/payments/products";
 import type {
   CtaSection,
   FeaturesSection,
@@ -34,6 +35,7 @@ export interface RenderContext {
   mode: "live" | "editor";
   pageId: string;
   visitorId?: string;
+  slug?: string;
 }
 
 /* ------------------------------- Static parts ----------------------------- */
@@ -299,6 +301,11 @@ export function renderSection(section: LandingSection, ctx: RenderContext): Reac
     case "cta":
       return <Cta section={section} />;
     case "checkout":
+      {
+        const product = getProduct(section.sku);
+        const productTitle = product?.title ?? section.sku;
+        const pricePaise = product?.amountPaise;
+
       return (
         <section id="pay" className="scroll-mt-6 px-5 py-10">
           <div className="mx-auto max-w-md rounded-[var(--lp-radius)] border border-[var(--lp-border)] bg-[var(--lp-subtle)] p-6 text-center">
@@ -309,11 +316,18 @@ export function renderSection(section: LandingSection, ctx: RenderContext): Reac
                 Razorpay Checkout button (SKU: {section.sku}) — renders on the live page
               </div>
             ) : (
-              <CheckoutButton sku={section.sku} ctaLabel={section.ctaLabel} />
+              <CheckoutButton
+                sku={section.sku}
+                ctaLabel={section.ctaLabel}
+                slug={ctx.slug}
+                productTitle={productTitle}
+                amountPaise={pricePaise}
+              />
             )}
           </div>
         </section>
       );
+      }
     case "compliance":
       return <Compliance section={section} />;
     case "exit_intent":

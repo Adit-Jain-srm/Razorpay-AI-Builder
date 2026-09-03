@@ -87,7 +87,7 @@ export default async function PublicLandingPage({
         </div>
       ) : null}
       {document.sections.map((section) => (
-        <Fragment key={section.id}>{renderSection(section, { mode: "live", pageId: page.id, visitorId })}</Fragment>
+        <Fragment key={section.id}>{renderSection(section, { mode: "live", pageId: page.id, visitorId, slug })}</Fragment>
       ))}
       <ViewBeacon pageId={page.id} visitorId={visitorId} />
       {exitIntent ? <ExitIntentPopup pageId={page.id} visitorId={visitorId} section={exitIntent} /> : null}
