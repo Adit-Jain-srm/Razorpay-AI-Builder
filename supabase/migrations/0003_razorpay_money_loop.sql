@@ -30,6 +30,7 @@ create table if not exists public.products (
 );
 create index if not exists products_user_id_idx on public.products (user_id);
 create index if not exists products_status_sort_idx on public.products (status, sort_order);
+drop trigger if exists products_set_updated_at on public.products;
 create trigger products_set_updated_at before update on public.products
   for each row execute function public.set_updated_at();
 
@@ -57,6 +58,7 @@ create table if not exists public.mandates (
 create index if not exists mandates_user_id_idx on public.mandates (user_id);
 create index if not exists mandates_campaign_active_idx on public.mandates (campaign_id, status, expires_at)
   where status = 'active';
+drop trigger if exists mandates_set_updated_at on public.mandates;
 create trigger mandates_set_updated_at before update on public.mandates
   for each row execute function public.set_updated_at();
 
@@ -86,6 +88,7 @@ create index if not exists orders_user_id_idx on public.orders (user_id);
 create index if not exists orders_campaign_status_idx on public.orders (user_id, campaign_id, status);
 create index if not exists orders_razorpay_id_idx on public.orders (razorpay_order_id) where razorpay_order_id is not null;
 create index if not exists orders_created_at_idx on public.orders (created_at);
+drop trigger if exists orders_set_updated_at on public.orders;
 create trigger orders_set_updated_at before update on public.orders
   for each row execute function public.set_updated_at();
 
@@ -127,6 +130,7 @@ create index if not exists payments_order_id_idx on public.payments (order_id);
 create index if not exists payments_user_id_idx on public.payments (user_id);
 create index if not exists payments_razorpay_id_idx on public.payments (razorpay_payment_id)
   where razorpay_payment_id is not null;
+drop trigger if exists payments_set_updated_at on public.payments;
 create trigger payments_set_updated_at before update on public.payments
   for each row execute function public.set_updated_at();
 
@@ -184,27 +188,36 @@ alter table public.audit_events enable row level security;
 alter table public.webhook_receipts enable row level security;
 
 -- Owner-scoped full access (same pattern as 0001_init.sql).
+drop policy if exists products_owner_all on public.products;
 create policy products_owner_all on public.products for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists mandates_owner_all on public.mandates;
 create policy mandates_owner_all on public.mandates for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists orders_owner_all on public.orders;
 create policy orders_owner_all on public.orders for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists order_items_owner_all on public.order_items;
 create policy order_items_owner_all on public.order_items for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists payments_owner_all on public.payments;
 create policy payments_owner_all on public.payments for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists webhook_receipts_owner_all on public.webhook_receipts;
 create policy webhook_receipts_owner_all on public.webhook_receipts for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- Audit events: owner can SELECT only (append-only, no update/delete).
+drop policy if exists audit_events_owner_select on public.audit_events;
 create policy audit_events_owner_select on public.audit_events for select to authenticated
   using (auth.uid() = user_id);
+drop policy if exists audit_events_owner_insert on public.audit_events;
 create policy audit_events_owner_insert on public.audit_events for insert to authenticated
   with check (auth.uid() = user_id);
 
 -- Public order insert: anonymous visitors can create orders tied to deployed pages
 -- (same pattern as leads/page_views in 0001).
+drop policy if exists orders_public_insert on public.orders;
 create policy orders_public_insert on public.orders for insert to anon, authenticated
   with check (
     exists (
@@ -216,6 +229,7 @@ create policy orders_public_insert on public.orders for insert to anon, authenti
   );
 
 -- Public product read: anyone can see active products (catalog).
+drop policy if exists products_public_read on public.products;
 create policy products_public_read on public.products for select to anon, authenticated
   using (status = 'active');
 

@@ -39,6 +39,7 @@ create table if not exists public.campaigns (
 );
 create index if not exists campaigns_user_id_idx on public.campaigns (user_id);
 create index if not exists campaigns_status_idx on public.campaigns (status);
+drop trigger if exists campaigns_set_updated_at on public.campaigns;
 create trigger campaigns_set_updated_at before update on public.campaigns
   for each row execute function public.set_updated_at();
 
@@ -57,6 +58,7 @@ create table if not exists public.agent_conversations (
 );
 create index if not exists agent_conversations_user_id_idx on public.agent_conversations (user_id);
 create index if not exists agent_conversations_campaign_id_idx on public.agent_conversations (campaign_id);
+drop trigger if exists agent_conversations_set_updated_at on public.agent_conversations;
 create trigger agent_conversations_set_updated_at before update on public.agent_conversations
   for each row execute function public.set_updated_at();
 
@@ -87,6 +89,7 @@ create table if not exists public.agent_runs (
 );
 create index if not exists agent_runs_conversation_id_idx on public.agent_runs (conversation_id);
 create index if not exists agent_runs_user_id_idx on public.agent_runs (user_id);
+drop trigger if exists agent_runs_set_updated_at on public.agent_runs;
 create trigger agent_runs_set_updated_at before update on public.agent_runs
   for each row execute function public.set_updated_at();
 
@@ -106,6 +109,7 @@ create table if not exists public.research_projects (
 );
 create index if not exists research_projects_user_id_idx on public.research_projects (user_id);
 create index if not exists research_projects_campaign_id_idx on public.research_projects (campaign_id);
+drop trigger if exists research_projects_set_updated_at on public.research_projects;
 create trigger research_projects_set_updated_at before update on public.research_projects
   for each row execute function public.set_updated_at();
 
@@ -127,6 +131,7 @@ create table if not exists public.audience_personas (
 );
 create index if not exists audience_personas_project_id_idx on public.audience_personas (project_id);
 create index if not exists audience_personas_user_id_idx on public.audience_personas (user_id);
+drop trigger if exists audience_personas_set_updated_at on public.audience_personas;
 create trigger audience_personas_set_updated_at before update on public.audience_personas
   for each row execute function public.set_updated_at();
 
@@ -209,6 +214,7 @@ create table if not exists public.brand_voices (
   updated_at timestamptz not null default now()
 );
 create index if not exists brand_voices_user_id_idx on public.brand_voices (user_id);
+drop trigger if exists brand_voices_set_updated_at on public.brand_voices;
 create trigger brand_voices_set_updated_at before update on public.brand_voices
   for each row execute function public.set_updated_at();
 
@@ -230,6 +236,7 @@ create table if not exists public.creatives (
 );
 create index if not exists creatives_campaign_id_idx on public.creatives (campaign_id);
 create index if not exists creatives_user_id_idx on public.creatives (user_id);
+drop trigger if exists creatives_set_updated_at on public.creatives;
 create trigger creatives_set_updated_at before update on public.creatives
   for each row execute function public.set_updated_at();
 
@@ -266,6 +273,7 @@ create table if not exists public.landing_pages (
 create index if not exists landing_pages_campaign_id_idx on public.landing_pages (campaign_id);
 create index if not exists landing_pages_user_id_idx on public.landing_pages (user_id);
 create index if not exists landing_pages_status_idx on public.landing_pages (status);
+drop trigger if exists landing_pages_set_updated_at on public.landing_pages;
 create trigger landing_pages_set_updated_at before update on public.landing_pages
   for each row execute function public.set_updated_at();
 
@@ -377,49 +385,69 @@ alter table public.anomalies enable row level security;
 alter table public.ai_insights enable row level security;
 
 -- Owner-scoped full access (select/insert/update/delete) for authenticated users.
+drop policy if exists campaigns_owner_all on public.campaigns;
 create policy campaigns_owner_all on public.campaigns for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists agent_conversations_owner_all on public.agent_conversations;
 create policy agent_conversations_owner_all on public.agent_conversations for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists agent_messages_owner_all on public.agent_messages;
 create policy agent_messages_owner_all on public.agent_messages for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists agent_runs_owner_all on public.agent_runs;
 create policy agent_runs_owner_all on public.agent_runs for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists research_projects_owner_all on public.research_projects;
 create policy research_projects_owner_all on public.research_projects for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists audience_personas_owner_all on public.audience_personas;
 create policy audience_personas_owner_all on public.audience_personas for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists competitor_ads_owner_all on public.competitor_ads;
 create policy competitor_ads_owner_all on public.competitor_ads for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists trend_signals_owner_all on public.trend_signals;
 create policy trend_signals_owner_all on public.trend_signals for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists community_insights_owner_all on public.community_insights;
 create policy community_insights_owner_all on public.community_insights for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists research_sources_owner_all on public.research_sources;
 create policy research_sources_owner_all on public.research_sources for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists brand_voices_owner_all on public.brand_voices;
 create policy brand_voices_owner_all on public.brand_voices for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists creatives_owner_all on public.creatives;
 create policy creatives_owner_all on public.creatives for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists creative_images_owner_all on public.creative_images;
 create policy creative_images_owner_all on public.creative_images for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists performance_metrics_owner_all on public.performance_metrics;
 create policy performance_metrics_owner_all on public.performance_metrics for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists anomalies_owner_all on public.anomalies;
 create policy anomalies_owner_all on public.anomalies for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists ai_insights_owner_all on public.ai_insights;
 create policy ai_insights_owner_all on public.ai_insights for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- Landing pages: owner full access + public read of DEPLOYED pages (for /lp/[slug]).
+drop policy if exists landing_pages_owner_all on public.landing_pages;
 create policy landing_pages_owner_all on public.landing_pages for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists landing_pages_public_read on public.landing_pages;
 create policy landing_pages_public_read on public.landing_pages for select to anon, authenticated
   using (status = 'deployed');
 
 -- Page views: owner reads/manages; anyone may INSERT a view that attaches to a
 -- deployed page owned by the recorded user_id.
+drop policy if exists page_views_owner_all on public.page_views;
 create policy page_views_owner_all on public.page_views for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists page_views_public_insert on public.page_views;
 create policy page_views_public_insert on public.page_views for insert to anon, authenticated
   with check (
     exists (
@@ -432,8 +460,10 @@ create policy page_views_public_insert on public.page_views for insert to anon, 
 
 -- Leads: owner reads/manages; anyone may INSERT a lead that attaches to a
 -- deployed page owned by the recorded user_id.
+drop policy if exists leads_owner_all on public.leads;
 create policy leads_owner_all on public.leads for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists leads_public_insert on public.leads;
 create policy leads_public_insert on public.leads for insert to anon, authenticated
   with check (
     exists (
