@@ -8,7 +8,7 @@
 /* Products (agent-readable catalog)                                           */
 /* ========================================================================== */
 
-create table public.products (
+create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   sku text not null,
@@ -28,8 +28,8 @@ create table public.products (
   updated_at timestamptz not null default now(),
   unique (user_id, sku)
 );
-create index products_user_id_idx on public.products (user_id);
-create index products_status_sort_idx on public.products (status, sort_order);
+create index if not exists products_user_id_idx on public.products (user_id);
+create index if not exists products_status_sort_idx on public.products (status, sort_order);
 create trigger products_set_updated_at before update on public.products
   for each row execute function public.set_updated_at();
 
@@ -37,7 +37,7 @@ create trigger products_set_updated_at before update on public.products
 /* Mandates (AP2-style bounds on money actions)                                */
 /* ========================================================================== */
 
-create table public.mandates (
+create table if not exists public.mandates (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   campaign_id uuid references public.campaigns (id) on delete set null,
@@ -54,8 +54,8 @@ create table public.mandates (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index mandates_user_id_idx on public.mandates (user_id);
-create index mandates_campaign_active_idx on public.mandates (campaign_id, status, expires_at)
+create index if not exists mandates_user_id_idx on public.mandates (user_id);
+create index if not exists mandates_campaign_active_idx on public.mandates (campaign_id, status, expires_at)
   where status = 'active';
 create trigger mandates_set_updated_at before update on public.mandates
   for each row execute function public.set_updated_at();
@@ -64,7 +64,7 @@ create trigger mandates_set_updated_at before update on public.mandates
 /* Orders                                                                      */
 /* ========================================================================== */
 
-create table public.orders (
+create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   campaign_id uuid references public.campaigns (id) on delete set null,
@@ -82,10 +82,10 @@ create table public.orders (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index orders_user_id_idx on public.orders (user_id);
-create index orders_campaign_status_idx on public.orders (user_id, campaign_id, status);
-create index orders_razorpay_id_idx on public.orders (razorpay_order_id) where razorpay_order_id is not null;
-create index orders_created_at_idx on public.orders (created_at);
+create index if not exists orders_user_id_idx on public.orders (user_id);
+create index if not exists orders_campaign_status_idx on public.orders (user_id, campaign_id, status);
+create index if not exists orders_razorpay_id_idx on public.orders (razorpay_order_id) where razorpay_order_id is not null;
+create index if not exists orders_created_at_idx on public.orders (created_at);
 create trigger orders_set_updated_at before update on public.orders
   for each row execute function public.set_updated_at();
 
@@ -93,7 +93,7 @@ create trigger orders_set_updated_at before update on public.orders
 /* Order items (line-level detail for upsell/cross-sell)                        */
 /* ========================================================================== */
 
-create table public.order_items (
+create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.orders (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -103,14 +103,14 @@ create table public.order_items (
   role text not null default 'primary',
   created_at timestamptz not null default now()
 );
-create index order_items_order_id_idx on public.order_items (order_id);
-create index order_items_user_id_idx on public.order_items (user_id);
+create index if not exists order_items_order_id_idx on public.order_items (order_id);
+create index if not exists order_items_user_id_idx on public.order_items (user_id);
 
 /* ========================================================================== */
 /* Payments (Razorpay payment entities)                                        */
 /* ========================================================================== */
 
-create table public.payments (
+create table if not exists public.payments (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.orders (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -123,9 +123,9 @@ create table public.payments (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index payments_order_id_idx on public.payments (order_id);
-create index payments_user_id_idx on public.payments (user_id);
-create index payments_razorpay_id_idx on public.payments (razorpay_payment_id)
+create index if not exists payments_order_id_idx on public.payments (order_id);
+create index if not exists payments_user_id_idx on public.payments (user_id);
+create index if not exists payments_razorpay_id_idx on public.payments (razorpay_payment_id)
   where razorpay_payment_id is not null;
 create trigger payments_set_updated_at before update on public.payments
   for each row execute function public.set_updated_at();
@@ -134,7 +134,7 @@ create trigger payments_set_updated_at before update on public.payments
 /* Audit events (append-only ledger of money actions)                          */
 /* ========================================================================== */
 
-create table public.audit_events (
+create table if not exists public.audit_events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   actor text not null,
@@ -149,16 +149,16 @@ create table public.audit_events (
   error_code text,
   created_at timestamptz not null default now()
 );
-create index audit_events_user_id_idx on public.audit_events (user_id);
-create index audit_events_campaign_timeline_idx on public.audit_events (campaign_id, created_at desc);
-create index audit_events_order_id_idx on public.audit_events (order_id)
+create index if not exists audit_events_user_id_idx on public.audit_events (user_id);
+create index if not exists audit_events_campaign_timeline_idx on public.audit_events (campaign_id, created_at desc);
+create index if not exists audit_events_order_id_idx on public.audit_events (order_id)
   where order_id is not null;
 
 /* ========================================================================== */
 /* Webhook receipts (idempotency + signature log)                              */
 /* ========================================================================== */
 
-create table public.webhook_receipts (
+create table if not exists public.webhook_receipts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   event_id text not null unique,
@@ -168,8 +168,8 @@ create table public.webhook_receipts (
   processed_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index webhook_receipts_user_id_idx on public.webhook_receipts (user_id);
-create index webhook_receipts_event_id_idx on public.webhook_receipts (event_id);
+create index if not exists webhook_receipts_user_id_idx on public.webhook_receipts (user_id);
+create index if not exists webhook_receipts_event_id_idx on public.webhook_receipts (event_id);
 
 /* ========================================================================== */
 /* Row Level Security                                                          */

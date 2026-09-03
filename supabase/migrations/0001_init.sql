@@ -25,7 +25,7 @@ $$;
 /* Campaigns (hub - referenced by many tables)                                */
 /* ========================================================================== */
 
-create table public.campaigns (
+create table if not exists public.campaigns (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   name text not null,
@@ -37,8 +37,8 @@ create table public.campaigns (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index campaigns_user_id_idx on public.campaigns (user_id);
-create index campaigns_status_idx on public.campaigns (status);
+create index if not exists campaigns_user_id_idx on public.campaigns (user_id);
+create index if not exists campaigns_status_idx on public.campaigns (status);
 create trigger campaigns_set_updated_at before update on public.campaigns
   for each row execute function public.set_updated_at();
 
@@ -46,7 +46,7 @@ create trigger campaigns_set_updated_at before update on public.campaigns
 /* Agent                                                                      */
 /* ========================================================================== */
 
-create table public.agent_conversations (
+create table if not exists public.agent_conversations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   campaign_id uuid references public.campaigns (id) on delete set null,
@@ -55,12 +55,12 @@ create table public.agent_conversations (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index agent_conversations_user_id_idx on public.agent_conversations (user_id);
-create index agent_conversations_campaign_id_idx on public.agent_conversations (campaign_id);
+create index if not exists agent_conversations_user_id_idx on public.agent_conversations (user_id);
+create index if not exists agent_conversations_campaign_id_idx on public.agent_conversations (campaign_id);
 create trigger agent_conversations_set_updated_at before update on public.agent_conversations
   for each row execute function public.set_updated_at();
 
-create table public.agent_messages (
+create table if not exists public.agent_messages (
   id uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references public.agent_conversations (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -70,11 +70,11 @@ create table public.agent_messages (
   tool_results jsonb,
   created_at timestamptz not null default now()
 );
-create index agent_messages_conversation_id_idx on public.agent_messages (conversation_id);
-create index agent_messages_user_id_idx on public.agent_messages (user_id);
-create index agent_messages_created_at_idx on public.agent_messages (created_at);
+create index if not exists agent_messages_conversation_id_idx on public.agent_messages (conversation_id);
+create index if not exists agent_messages_user_id_idx on public.agent_messages (user_id);
+create index if not exists agent_messages_created_at_idx on public.agent_messages (created_at);
 
-create table public.agent_runs (
+create table if not exists public.agent_runs (
   id uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references public.agent_conversations (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -85,8 +85,8 @@ create table public.agent_runs (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index agent_runs_conversation_id_idx on public.agent_runs (conversation_id);
-create index agent_runs_user_id_idx on public.agent_runs (user_id);
+create index if not exists agent_runs_conversation_id_idx on public.agent_runs (conversation_id);
+create index if not exists agent_runs_user_id_idx on public.agent_runs (user_id);
 create trigger agent_runs_set_updated_at before update on public.agent_runs
   for each row execute function public.set_updated_at();
 
@@ -94,7 +94,7 @@ create trigger agent_runs_set_updated_at before update on public.agent_runs
 /* Research (USP)                                                             */
 /* ========================================================================== */
 
-create table public.research_projects (
+create table if not exists public.research_projects (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   campaign_id uuid references public.campaigns (id) on delete set null,
@@ -104,12 +104,12 @@ create table public.research_projects (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index research_projects_user_id_idx on public.research_projects (user_id);
-create index research_projects_campaign_id_idx on public.research_projects (campaign_id);
+create index if not exists research_projects_user_id_idx on public.research_projects (user_id);
+create index if not exists research_projects_campaign_id_idx on public.research_projects (campaign_id);
 create trigger research_projects_set_updated_at before update on public.research_projects
   for each row execute function public.set_updated_at();
 
-create table public.audience_personas (
+create table if not exists public.audience_personas (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.research_projects (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -125,12 +125,12 @@ create table public.audience_personas (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index audience_personas_project_id_idx on public.audience_personas (project_id);
-create index audience_personas_user_id_idx on public.audience_personas (user_id);
+create index if not exists audience_personas_project_id_idx on public.audience_personas (project_id);
+create index if not exists audience_personas_user_id_idx on public.audience_personas (user_id);
 create trigger audience_personas_set_updated_at before update on public.audience_personas
   for each row execute function public.set_updated_at();
 
-create table public.competitor_ads (
+create table if not exists public.competitor_ads (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.research_projects (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -144,10 +144,10 @@ create table public.competitor_ads (
   image_url text,
   created_at timestamptz not null default now()
 );
-create index competitor_ads_project_id_idx on public.competitor_ads (project_id);
-create index competitor_ads_user_id_idx on public.competitor_ads (user_id);
+create index if not exists competitor_ads_project_id_idx on public.competitor_ads (project_id);
+create index if not exists competitor_ads_user_id_idx on public.competitor_ads (user_id);
 
-create table public.trend_signals (
+create table if not exists public.trend_signals (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.research_projects (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -160,11 +160,11 @@ create table public.trend_signals (
   detected_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
-create index trend_signals_project_id_idx on public.trend_signals (project_id);
-create index trend_signals_user_id_idx on public.trend_signals (user_id);
-create index trend_signals_detected_at_idx on public.trend_signals (detected_at);
+create index if not exists trend_signals_project_id_idx on public.trend_signals (project_id);
+create index if not exists trend_signals_user_id_idx on public.trend_signals (user_id);
+create index if not exists trend_signals_detected_at_idx on public.trend_signals (detected_at);
 
-create table public.community_insights (
+create table if not exists public.community_insights (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.research_projects (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -177,10 +177,10 @@ create table public.community_insights (
   posted_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index community_insights_project_id_idx on public.community_insights (project_id);
-create index community_insights_user_id_idx on public.community_insights (user_id);
+create index if not exists community_insights_project_id_idx on public.community_insights (project_id);
+create index if not exists community_insights_user_id_idx on public.community_insights (user_id);
 
-create table public.research_sources (
+create table if not exists public.research_sources (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.research_projects (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -192,14 +192,14 @@ create table public.research_sources (
   confidence numeric,
   created_at timestamptz not null default now()
 );
-create index research_sources_project_id_idx on public.research_sources (project_id);
-create index research_sources_user_id_idx on public.research_sources (user_id);
+create index if not exists research_sources_project_id_idx on public.research_sources (project_id);
+create index if not exists research_sources_user_id_idx on public.research_sources (user_id);
 
 /* ========================================================================== */
 /* Creative                                                                   */
 /* ========================================================================== */
 
-create table public.brand_voices (
+create table if not exists public.brand_voices (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   name text not null,
@@ -208,11 +208,11 @@ create table public.brand_voices (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index brand_voices_user_id_idx on public.brand_voices (user_id);
+create index if not exists brand_voices_user_id_idx on public.brand_voices (user_id);
 create trigger brand_voices_set_updated_at before update on public.brand_voices
   for each row execute function public.set_updated_at();
 
-create table public.creatives (
+create table if not exists public.creatives (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -228,12 +228,12 @@ create table public.creatives (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index creatives_campaign_id_idx on public.creatives (campaign_id);
-create index creatives_user_id_idx on public.creatives (user_id);
+create index if not exists creatives_campaign_id_idx on public.creatives (campaign_id);
+create index if not exists creatives_user_id_idx on public.creatives (user_id);
 create trigger creatives_set_updated_at before update on public.creatives
   for each row execute function public.set_updated_at();
 
-create table public.creative_images (
+create table if not exists public.creative_images (
   id uuid primary key default gen_random_uuid(),
   creative_id uuid not null references public.creatives (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -243,14 +243,14 @@ create table public.creative_images (
   prompt_used text,
   created_at timestamptz not null default now()
 );
-create index creative_images_creative_id_idx on public.creative_images (creative_id);
-create index creative_images_user_id_idx on public.creative_images (user_id);
+create index if not exists creative_images_creative_id_idx on public.creative_images (creative_id);
+create index if not exists creative_images_user_id_idx on public.creative_images (user_id);
 
 /* ========================================================================== */
 /* Landing pages                                                              */
 /* ========================================================================== */
 
-create table public.landing_pages (
+create table if not exists public.landing_pages (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -263,13 +263,13 @@ create table public.landing_pages (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index landing_pages_campaign_id_idx on public.landing_pages (campaign_id);
-create index landing_pages_user_id_idx on public.landing_pages (user_id);
-create index landing_pages_status_idx on public.landing_pages (status);
+create index if not exists landing_pages_campaign_id_idx on public.landing_pages (campaign_id);
+create index if not exists landing_pages_user_id_idx on public.landing_pages (user_id);
+create index if not exists landing_pages_status_idx on public.landing_pages (status);
 create trigger landing_pages_set_updated_at before update on public.landing_pages
   for each row execute function public.set_updated_at();
 
-create table public.page_views (
+create table if not exists public.page_views (
   id uuid primary key default gen_random_uuid(),
   landing_page_id uuid not null references public.landing_pages (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -278,11 +278,11 @@ create table public.page_views (
   referrer text,
   created_at timestamptz not null default now()
 );
-create index page_views_landing_page_id_idx on public.page_views (landing_page_id);
-create index page_views_user_id_idx on public.page_views (user_id);
-create index page_views_created_at_idx on public.page_views (created_at);
+create index if not exists page_views_landing_page_id_idx on public.page_views (landing_page_id);
+create index if not exists page_views_user_id_idx on public.page_views (user_id);
+create index if not exists page_views_created_at_idx on public.page_views (created_at);
 
-create table public.leads (
+create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),
   landing_page_id uuid not null references public.landing_pages (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -292,15 +292,15 @@ create table public.leads (
   ip_address text,
   created_at timestamptz not null default now()
 );
-create index leads_landing_page_id_idx on public.leads (landing_page_id);
-create index leads_user_id_idx on public.leads (user_id);
-create index leads_created_at_idx on public.leads (created_at);
+create index if not exists leads_landing_page_id_idx on public.leads (landing_page_id);
+create index if not exists leads_user_id_idx on public.leads (user_id);
+create index if not exists leads_created_at_idx on public.leads (created_at);
 
 /* ========================================================================== */
 /* Analytics                                                                  */
 /* ========================================================================== */
 
-create table public.performance_metrics (
+create table if not exists public.performance_metrics (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns (id) on delete cascade,
   creative_id uuid references public.creatives (id) on delete set null,
@@ -318,13 +318,13 @@ create table public.performance_metrics (
   roas numeric,
   created_at timestamptz not null default now()
 );
-create index performance_metrics_campaign_id_idx on public.performance_metrics (campaign_id);
-create index performance_metrics_creative_id_idx on public.performance_metrics (creative_id);
-create index performance_metrics_user_id_idx on public.performance_metrics (user_id);
-create index performance_metrics_date_idx on public.performance_metrics (date);
-create index performance_metrics_campaign_date_idx on public.performance_metrics (campaign_id, date);
+create index if not exists performance_metrics_campaign_id_idx on public.performance_metrics (campaign_id);
+create index if not exists performance_metrics_creative_id_idx on public.performance_metrics (creative_id);
+create index if not exists performance_metrics_user_id_idx on public.performance_metrics (user_id);
+create index if not exists performance_metrics_date_idx on public.performance_metrics (date);
+create index if not exists performance_metrics_campaign_date_idx on public.performance_metrics (campaign_id, date);
 
-create table public.anomalies (
+create table if not exists public.anomalies (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -335,11 +335,11 @@ create table public.anomalies (
   resolved_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index anomalies_campaign_id_idx on public.anomalies (campaign_id);
-create index anomalies_user_id_idx on public.anomalies (user_id);
-create index anomalies_detected_at_idx on public.anomalies (detected_at);
+create index if not exists anomalies_campaign_id_idx on public.anomalies (campaign_id);
+create index if not exists anomalies_user_id_idx on public.anomalies (user_id);
+create index if not exists anomalies_detected_at_idx on public.anomalies (detected_at);
 
-create table public.ai_insights (
+create table if not exists public.ai_insights (
   id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns (id) on delete cascade,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -349,8 +349,8 @@ create table public.ai_insights (
   actioned boolean not null default false,
   created_at timestamptz not null default now()
 );
-create index ai_insights_campaign_id_idx on public.ai_insights (campaign_id);
-create index ai_insights_user_id_idx on public.ai_insights (user_id);
+create index if not exists ai_insights_campaign_id_idx on public.ai_insights (campaign_id);
+create index if not exists ai_insights_user_id_idx on public.ai_insights (user_id);
 
 /* ========================================================================== */
 /* Row Level Security                                                          */
