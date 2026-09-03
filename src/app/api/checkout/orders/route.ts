@@ -4,6 +4,8 @@
  * Create a Razorpay order for a product SKU. Server-priced: the client sends
  * the SKU, not the amount. Policy + mandate are checked before calling Razorpay.
  *
+ * Persists the order in the in-memory store and writes an audit event.
+ *
  * runtime = "nodejs" (server-only: Razorpay credentials, crypto).
  */
 
@@ -13,6 +15,8 @@ import { z } from "zod";
 import { getEnv, isRazorpayConfigured } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
+import { writeAudit } from "@/lib/payments/audit";
+import { storeOrder } from "@/lib/payments/orders";
 import { getProduct } from "@/lib/payments/products";
 
 export const runtime = "nodejs";
@@ -64,6 +68,7 @@ export async function POST(request: Request) {
     // Generate a receipt and order ID
     const orderId = crypto.randomUUID();
     const receipt = `mediaos_${orderId.slice(0, 8)}`;
+    const now = new Date().toISOString();
 
     // If Razorpay is configured, create a real test-mode order
     if (isRazorpayConfigured()) {
@@ -80,6 +85,34 @@ export async function POST(request: Request) {
         },
       });
 
+      storeOrder({
+        orderId,
+        razorpayOrderId: rzpOrder.id,
+        razorpayPaymentId: null,
+        sku,
+        productTitle: product.title,
+        amountPaise: totalPaise,
+        currency: product.currency,
+        receipt,
+        items,
+        status: "created",
+        mode: "live",
+        campaignId: campaignId ?? null,
+        landingPageId: landingPageId ?? null,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      writeAudit({
+        actor: "buyer",
+        action: "order_created",
+        campaignId,
+        orderId,
+        reason: `Order created for ${product.title} (${sku}) — ₹${(totalPaise / 100).toLocaleString("en-IN")}`,
+        afterState: { razorpayOrderId: rzpOrder.id, amountPaise: totalPaise, mode: "live" },
+        ok: true,
+      });
+
       return NextResponse.json({
         orderId,
         razorpayOrderId: rzpOrder.id,
@@ -93,9 +126,39 @@ export async function POST(request: Request) {
     }
 
     // Demo mode: return a mock order
+    const demoRzpId = `order_demo_${orderId.slice(0, 12)}`;
+
+    storeOrder({
+      orderId,
+      razorpayOrderId: demoRzpId,
+      razorpayPaymentId: null,
+      sku,
+      productTitle: product.title,
+      amountPaise: totalPaise,
+      currency: product.currency,
+      receipt,
+      items,
+      status: "created",
+      mode: "demo",
+      campaignId: campaignId ?? null,
+      landingPageId: landingPageId ?? null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    writeAudit({
+      actor: "buyer",
+      action: "order_created",
+      campaignId,
+      orderId,
+      reason: `Demo order created for ${product.title} (${sku}) — ₹${(totalPaise / 100).toLocaleString("en-IN")}`,
+      afterState: { razorpayOrderId: demoRzpId, amountPaise: totalPaise, mode: "demo" },
+      ok: true,
+    });
+
     return NextResponse.json({
       orderId,
-      razorpayOrderId: `order_demo_${orderId.slice(0, 12)}`,
+      razorpayOrderId: demoRzpId,
       amountPaise: totalPaise,
       currency: product.currency,
       receipt,

@@ -8,6 +8,8 @@
  * Idempotent: duplicate event.id is acknowledged but not re-processed.
  * Replay guard: events older than 5 minutes (after signature verification) are ignored.
  *
+ * Now persists order status updates + audit events.
+ *
  * Reference: https://razorpay.com/docs/webhooks/validate-test/
  *
  * runtime = "nodejs" (crypto, raw body parsing).
@@ -17,7 +19,9 @@ import { NextResponse } from "next/server";
 
 import { getEnv, isRazorpayWebhookConfigured } from "@/lib/env";
 import { logger } from "@/lib/logger";
+import { writeAudit } from "@/lib/payments/audit";
 import { verifyWebhookSignature } from "@/lib/payments/hmac";
+import { updateOrderByRazorpayId } from "@/lib/payments/orders";
 
 export const runtime = "nodejs";
 
@@ -54,6 +58,13 @@ export async function POST(request: Request) {
 
     if (!verifyWebhookSignature(rawBody, signature, webhookSecret)) {
       logger.warn("Webhook signature invalid");
+      writeAudit({
+        actor: "webhook",
+        action: "signature_invalid",
+        reason: "Webhook HMAC signature verification failed",
+        ok: false,
+        errorCode: "SIGNATURE_INVALID",
+      });
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
@@ -70,6 +81,7 @@ export async function POST(request: Request) {
     const paymentEntity = (event.payload as Record<string, Record<string, Record<string, unknown>>>)
       ?.payment?.entity;
     const paymentId = typeof paymentEntity?.id === "string" ? paymentEntity.id : "";
+    const razorpayOrderId = typeof paymentEntity?.order_id === "string" ? paymentEntity.order_id : "";
     const eventId = paymentId
       ? `${event.event}_${paymentId}`
       : `${event.event}_${eventCreatedAt}`;
@@ -92,17 +104,48 @@ export async function POST(request: Request) {
     // Mark as processed (respond 200 fast, then process)
     trackEventId(eventId);
 
-    // Process by event type
+    // Process by event type — persist order status + audit
     switch (event.event) {
-      case "payment.captured":
-        logger.info("Payment captured via webhook", { eventId });
+      case "payment.captured": {
+        logger.info("Payment captured via webhook", { eventId, razorpayOrderId });
+        const order = razorpayOrderId
+          ? updateOrderByRazorpayId(razorpayOrderId, "paid", paymentId)
+          : undefined;
+        writeAudit({
+          actor: "webhook",
+          action: "payment_captured",
+          campaignId: order?.campaignId ?? undefined,
+          orderId: order?.orderId,
+          reason: `Razorpay payment captured: ${paymentId || "unknown"} for order ${razorpayOrderId || "unknown"}`,
+          afterState: { razorpayPaymentId: paymentId, razorpayOrderId, status: "paid" },
+          ok: true,
+        });
         break;
-      case "payment.failed":
-        logger.info("Payment failed via webhook", { eventId });
+      }
+      case "payment.failed": {
+        logger.info("Payment failed via webhook", { eventId, razorpayOrderId });
+        const order = razorpayOrderId
+          ? updateOrderByRazorpayId(razorpayOrderId, "failed", paymentId)
+          : undefined;
+        writeAudit({
+          actor: "webhook",
+          action: "payment_failed",
+          campaignId: order?.campaignId ?? undefined,
+          orderId: order?.orderId,
+          reason: `Payment failed — stop-rule: this order will not be retried. Razorpay order ${razorpayOrderId || "unknown"}`,
+          afterState: { razorpayPaymentId: paymentId, razorpayOrderId, status: "failed" },
+          ok: false,
+          errorCode: "PAYMENT_FAILED",
+        });
         break;
-      case "order.paid":
-        logger.info("Order paid via webhook", { eventId });
+      }
+      case "order.paid": {
+        logger.info("Order paid via webhook", { eventId, razorpayOrderId });
+        if (razorpayOrderId) {
+          updateOrderByRazorpayId(razorpayOrderId, "paid", paymentId);
+        }
         break;
+      }
       default:
         logger.info("Unhandled webhook event", { event: event.event });
     }
