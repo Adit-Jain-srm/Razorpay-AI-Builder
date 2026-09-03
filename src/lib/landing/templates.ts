@@ -364,6 +364,22 @@ function exitIntentSection(d: DerivedCopy, copy: LandingCopySpec): LandingSectio
   };
 }
 
+/** Razorpay Checkout section — included by default in all generated pages (Wave 7 Track 01). */
+function checkoutSection(d: DerivedCopy): LandingSection {
+  return {
+    id: sectionId("checkout"),
+    type: "checkout",
+    label: "Razorpay Checkout",
+    headline: `Get ${d.product} now`,
+    subtitle: "Secure payment powered by Razorpay. Test mode — no real money charged.",
+    sku: "AAROGYA-12W",
+    ctaLabel: `Pay ₹1,499 — Start now`,
+    showUpsells: false,
+    successPath: "thanks",
+    failurePath: "failed",
+  };
+}
+
 function complianceSection(disclaimers: string[]): ComplianceSection {
   return {
     id: sectionId("compliance"),
@@ -470,6 +486,7 @@ function buildSections(template: LandingTemplate, d: DerivedCopy, copy: LandingC
       return [
         heroSection(d, copy, ctaLabel),
         socialProofSection(d, copy),
+        checkoutSection(d),
         leadFormSection(d, copy, ctaLabel),
         exitIntentSection(d, copy),
         ...compliance,
@@ -482,6 +499,7 @@ function buildSections(template: LandingTemplate, d: DerivedCopy, copy: LandingC
         socialProofSection(d, copy),
         testimonialsSection(d, copy),
         countdownSection(copy),
+        checkoutSection(d),
         leadFormSection(d, copy, ctaLabel),
         faqSection(d, copy),
         exitIntentSection(d, copy),
@@ -491,6 +509,7 @@ function buildSections(template: LandingTemplate, d: DerivedCopy, copy: LandingC
       return [
         heroSection(d, copy, ctaLabel),
         quizSection(d, copy),
+        checkoutSection(d),
         leadFormSection(d, copy, ctaLabel),
         socialProofSection(d, copy),
         ...compliance,
@@ -502,6 +521,7 @@ function buildSections(template: LandingTemplate, d: DerivedCopy, copy: LandingC
         benefitsSection(d, copy),
         testimonialsSection(d, copy),
         ctaSection(d, ctaLabel),
+        checkoutSection(d),
         leadFormSection(d, copy, ctaLabel),
         exitIntentSection(d, copy),
         ...compliance,
@@ -511,11 +531,12 @@ function buildSections(template: LandingTemplate, d: DerivedCopy, copy: LandingC
         heroSection(d, copy, ctaLabel),
         listicleSection(d, copy),
         ctaSection(d, ctaLabel),
+        checkoutSection(d),
         leadFormSection(d, copy, ctaLabel),
         ...compliance,
       ];
     default:
-      return [heroSection(d, copy, ctaLabel), leadFormSection(d, copy, ctaLabel), ...compliance];
+      return [heroSection(d, copy, ctaLabel), checkoutSection(d), leadFormSection(d, copy, ctaLabel), ...compliance];
   }
 }
 
