@@ -17,7 +17,7 @@ import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import { writeAudit } from "@/lib/payments/audit";
 import { storeOrder } from "@/lib/payments/orders";
-import { getProduct } from "@/lib/payments/products";
+import { getProduct, upsertProduct } from "@/lib/payments/products";
 
 export const runtime = "nodejs";
 
@@ -28,6 +28,9 @@ const orderRequestSchema = z.object({
   upsellSkus: z.array(z.string().min(1).max(100)).max(5).default([]),
   utm: z.record(z.string(), z.string()).default({}),
   idempotencyKey: z.string().min(8).max(128).optional(),
+  // Fallback product details sent by CheckoutButton for auto-creation on cold instances
+  productTitle: z.string().max(200).optional(),
+  productAmountPaise: z.number().int().min(100).optional(),
 });
 
 export async function POST(request: Request) {
@@ -45,7 +48,24 @@ export async function POST(request: Request) {
     const { sku, landingPageId, campaignId, upsellSkus } = parsed.data;
 
     // Server-priced: resolve product from catalog, never trust client amount
-    const product = getProduct(sku);
+    let product = getProduct(sku);
+
+    // Auto-create if SKU missing on this serverless instance but client sent details
+    // (handles cold-start / cross-instance catalog drift for Operator-generated products)
+    if (!product && parsed.data.productTitle && parsed.data.productAmountPaise) {
+      product = upsertProduct({
+        sku,
+        title: parsed.data.productTitle,
+        description: "",
+        amountPaise: parsed.data.productAmountPaise,
+        currency: "INR",
+        imageUrl: null,
+        availability: "in_stock",
+        upsellSkus: [],
+        crossSellSkus: [],
+      });
+    }
+
     if (!product) {
       return NextResponse.json({ error: `Unknown SKU: ${sku}` }, { status: 404 });
     }

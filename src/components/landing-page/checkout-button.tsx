@@ -89,7 +89,15 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sku, landingPageId, campaignId }),
+        body: JSON.stringify({
+          sku,
+          landingPageId,
+          campaignId,
+          // Pass server-resolved product details so the orders route can auto-create
+          // the catalog entry if the SKU is missing on this serverless instance.
+          productTitle: productTitle ?? undefined,
+          productAmountPaise: amountPaise ?? undefined,
+        }),
       });
 
       if (!res.ok) {
