@@ -31,6 +31,10 @@ export function MessageBubble({ message, compact }: { message: UiMessage; compac
 
         {isAssistant && message.plan ? <PlanPanel plan={message.plan} /> : null}
 
+        {message.tools.length > 0 ? (
+          <div className={cn("space-y-1.5", compact && "space-y-1")}>{message.tools.map((tool) => <ToolCallCard key={tool.callId} tool={tool} />)}</div>
+        ) : null}
+
         {message.content ? (
           <div className="text-sm leading-relaxed text-pretty whitespace-pre-wrap text-foreground/90">
             {message.content}
@@ -40,10 +44,6 @@ export function MessageBubble({ message, compact }: { message: UiMessage; compac
           <div className="flex items-center gap-1 text-muted-foreground" aria-label="Operator is thinking">
             <TypingDots />
           </div>
-        ) : null}
-
-        {message.tools.length > 0 ? (
-          <div className={cn("space-y-1.5", compact && "space-y-1")}>{message.tools.map((tool) => <ToolCallCard key={tool.callId} tool={tool} />)}</div>
         ) : null}
       </div>
     </SlideUp>

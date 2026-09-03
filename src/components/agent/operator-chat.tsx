@@ -31,33 +31,46 @@ export function OperatorChat({
   const compact = variant === "compact";
   const { messages, isStreaming, mode, suggestions, error, send, stop } = controller;
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const last = messages.at(-1);
   const scrollSignal = `${messages.length}:${last?.content.length ?? 0}:${last?.tools.length ?? 0}`;
+
+  /**
+   * Smart auto-scroll: only scroll to the bottom if the user is already near it
+   * (within 200px). If they scrolled up to read the streaming text, don't yank them.
+   */
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: "end" });
+    const viewport = wrapperRef.current?.querySelector('[data-slot="scroll-area-viewport"]') as HTMLElement | null;
+    if (!viewport || !bottomRef.current) return;
+    const distanceFromBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+    if (distanceFromBottom < 200) {
+      bottomRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+    }
   }, [scrollSignal]);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <ScrollArea className="min-h-0 flex-1">
-        <div className={cn("flex flex-col gap-4", compact ? "p-2.5" : "p-4")}>
-          {messages.length === 0 ? (
-            <EmptyOperator onPick={send} compact={compact} />
-          ) : (
-            messages.map((message) => <MessageBubble key={message.id} message={message} compact={compact} />)
-          )}
+      <div ref={wrapperRef} className="min-h-0 flex-1">
+        <ScrollArea className="h-full">
+          <div className={cn("flex flex-col gap-4", compact ? "p-2.5" : "p-4")}>
+            {messages.length === 0 ? (
+              <EmptyOperator onPick={send} compact={compact} />
+            ) : (
+              messages.map((message) => <MessageBubble key={message.id} message={message} compact={compact} />)
+            )}
 
-          {error ? (
-            <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-xs text-destructive">
-              <Warning weight="fill" className="mt-0.5 size-3.5 shrink-0" />
-              <span>{error}</span>
-            </div>
-          ) : null}
+            {error ? (
+              <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-xs text-destructive">
+                <Warning weight="fill" className="mt-0.5 size-3.5 shrink-0" />
+                <span>{error}</span>
+              </div>
+            ) : null}
 
-          <div ref={bottomRef} />
-        </div>
-      </ScrollArea>
+            <div ref={bottomRef} />
+          </div>
+        </ScrollArea>
+      </div>
 
       <div className={cn("space-y-2 border-t border-border bg-sidebar/40", compact ? "p-2.5" : "p-3")}>
         {mode === "demo" ? <DemoBanner /> : null}
