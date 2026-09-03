@@ -383,13 +383,13 @@ function checkoutSection(d: DerivedCopy): LandingSection {
   };
 }
 
-/** Match a product name to the catalog. Picks exact title match, then substring, then default. */
+/** Match a product name to the catalog. Picks exact title match, then substring, then auto-creates. */
 function resolveCheckoutProduct(productName: string): { sku: string; priceLabel: string } {
   // Lazy import to avoid pulling server module into client bundle during SSR static analysis.
   // This function only runs server-side in the template builder.
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { getAllProducts } = require("@/lib/payments/products") as typeof import("@/lib/payments/products");
+    const { getAllProducts, upsertProduct } = require("@/lib/payments/products") as typeof import("@/lib/payments/products");
     const products = getAllProducts();
     const normalized = productName.toLowerCase().trim();
 
@@ -403,6 +403,26 @@ function resolveCheckoutProduct(productName: string): { sku: string; priceLabel:
       p.title.toLowerCase().includes(normalized.slice(0, 10)),
     );
     if (partial) return { sku: partial.sku, priceLabel: `₹${(partial.amountPaise / 100).toLocaleString("en-IN")}` };
+
+    // No match — auto-create from context so the page's checkout matches its product
+    const generatedSku = productName
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+      .slice(0, 30) || "CUSTOM-PRODUCT";
+    const defaultPaise = 149_900; // ₹1,499 default; Operator can update via add_product
+    upsertProduct({
+      sku: generatedSku,
+      title: productName,
+      description: "",
+      amountPaise: defaultPaise,
+      currency: "INR",
+      imageUrl: null,
+      availability: "in_stock",
+      upsellSkus: [],
+      crossSellSkus: [],
+    });
+    return { sku: generatedSku, priceLabel: `₹${(defaultPaise / 100).toLocaleString("en-IN")}` };
   } catch {
     // Module unavailable (client-side static analysis) — fall through to default
   }
