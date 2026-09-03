@@ -14,18 +14,11 @@ MediaOS — Autonomous Merchant Growth Agent
 
 ## Problem statement
 
-Small Indian merchants have no media-buying team, no agentic checkout, and no way to make their
-products sellable to AI buyers. They research audiences by hand, create creatives without data, and
-lose conversions because the path from ad to payment is fragmented. Meanwhile, the 2026 protocol
-race (NPCI UAP, OpenAI/Stripe ACP, Google AP2, Coinbase x402) is standardizing how AI agents
-discover products, negotiate price, and pay — but merchants have no tool to participate.
+Small Indian merchants have no media team, no agentic checkout, and no way to make their products sellable to AI buyers. They research audiences by hand, create creatives without data, and lose conversions because the path from ad to payment is fragmented. The 2026 protocol race — NPCI's Unified Agent Protocol for UPI, OpenAI/Stripe's Agentic Commerce Protocol, Google's AP2, Coinbase's x402 — is standardizing how AI agents discover products, negotiate price, and pay. Merchants need a tool to participate.
 
-MediaOS is an autonomous AI growth agent that closes this loop end to end: it researches Indian
-buyers with live web data (6 Bright Data providers), orchestrates a bounded ₹ campaign, generates
-platform-specific creatives and conversion-optimized landing pages, exposes an agent-readable product
-catalog, collects rupees through Razorpay test-mode Standard Checkout, upsells within a signed
-mandate, and optimizes toward a measurable ₹ objective — with a deterministic policy engine and an
-append-only audit trail on every money action, including graceful handling of payment failures.
+MediaOS is an autonomous AI growth agent that closes this loop end to end. It researches Indian buyers with 6 live Bright Data providers, orchestrates bounded INR campaigns with AI-generated creatives and conversion-optimized landing pages (14 section types, A/B testing), exposes an ACP-inspired agent-readable product catalog, collects rupees through Razorpay test-mode Standard Checkout with dual HMAC verification, upsells within AP2-style mandates, and optimizes toward a measurable ₹ objective using a per-audience growth scorecard.
+
+The Operator — a 25-tool autonomous agent — runs the full golden path: research → campaign → creatives → landing page → deploy → Razorpay checkout → analytics → budget reallocation. Every money action is gated by a deterministic policy engine (not the LLM), bounded by per-order and campaign caps, and logged to an append-only audit trail with 15 action types. Payment failures trigger stop-rules that prevent automatic retries. 507 tests verify the money path. The merchant is transactable — by humans on deployed pages, and by AI buyers through the catalog API.
 
 ## Architecture (paragraph)
 
