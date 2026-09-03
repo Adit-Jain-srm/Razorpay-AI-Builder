@@ -34,7 +34,7 @@ export function createLandingTools(): AgentTool[] {
   const build = defineTool<{ campaignId?: string; template: LandingTemplate; angle?: string }, LandingPageArtifactData>({
     name: "build_landing_page",
     description:
-      "Generate a research-informed landing page for a campaign from a template (squeeze, long_form_sales, quiz_funnel, advertorial, listicle). Produces conversion-structured sections (hero, proof, lead form, etc.) grounded in the campaign's pain points. Returns a DRAFT - call deploy_landing_page to make it live.",
+      "Generate a research-informed landing page for a campaign from a template (squeeze, long_form_sales, quiz_funnel, advertorial, listicle). Produces conversion-structured sections including Razorpay Checkout, hero, proof, and lead form — grounded in the campaign's pain points. Returns a DRAFT - call deploy_landing_page to make it live.",
     category: MODULE_TOOL_CATEGORY.landing,
     parameters: z.object({
       campaignId: z.string().max(100).optional().describe("Campaign the page belongs to (defaults to the demo campaign)"),
@@ -53,7 +53,7 @@ export function createLandingTools(): AgentTool[] {
   const deploy = defineTool<{ pageId: string }, LandingPageArtifactData>({
     name: "deploy_landing_page",
     description:
-      "Deploy a draft landing page to its public URL (/lp/{slug}), where it captures leads and page views. Returns the live page with its URL.",
+      "Deploy a draft landing page to its public URL (/lp/{slug}), with Razorpay Checkout and lead capture active. Returns the live page with its URL. ALWAYS call create_checkout_session right after this.",
     category: MODULE_TOOL_CATEGORY.landing,
     parameters: z.object({
       pageId: z.string().min(1).max(100).describe("The landing page id to deploy"),
