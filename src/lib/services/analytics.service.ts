@@ -6,6 +6,7 @@ import { UpstreamError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import { createClient } from "@/lib/supabase/server";
 import { generateMetrics, type MetricSeed } from "@/lib/seed/analytics-generator";
+import { DEMO_CAMPAIGN_ID, DEMO_TRACK01_CAMPAIGN_ID } from "@/lib/seed/constants";
 import { buildDemoSeedTargets } from "@/lib/seed/targets";
 import type {
   AiInsight,
@@ -382,21 +383,44 @@ export async function getAnalyticsStore(): Promise<AnalyticsStore> {
   }
 }
 
+/** Known demo campaign IDs that should fall through to seeded data. */
+const DEMO_CAMPAIGN_IDS = new Set([DEMO_CAMPAIGN_ID, DEMO_TRACK01_CAMPAIGN_ID]);
+
+function isDemoCampaignQuery(query: AnalyticsQuery): boolean {
+  return typeof query.campaignId === "string" && DEMO_CAMPAIGN_IDS.has(query.campaignId);
+}
+
 export const analyticsService: AnalyticsService = {
   async metrics(query) {
-    return (await getAnalyticsStore()).metrics(query);
+    const store = await getAnalyticsStore();
+    const rows = await store.metrics(query);
+    // Fall through to seeded data when Supabase returns empty for demo campaigns
+    if (rows.length === 0 && isDemoCampaignQuery(query) && store !== memoryStore) {
+      return memoryStore.metrics(query);
+    }
+    return rows;
   },
   async summary(query) {
-    return (await getAnalyticsStore()).summary(query);
+    return summarize(await this.metrics(query));
   },
   async insertMetrics(rows) {
     return (await getAnalyticsStore()).insertMetrics(rows);
   },
   async anomalies(campaignId) {
-    return (await getAnalyticsStore()).anomalies(campaignId);
+    const store = await getAnalyticsStore();
+    const rows = await store.anomalies(campaignId);
+    if (rows.length === 0 && DEMO_CAMPAIGN_IDS.has(campaignId) && store !== memoryStore) {
+      return memoryStore.anomalies(campaignId);
+    }
+    return rows;
   },
   async insights(campaignId) {
-    return (await getAnalyticsStore()).insights(campaignId);
+    const store = await getAnalyticsStore();
+    const rows = await store.insights(campaignId);
+    if (rows.length === 0 && DEMO_CAMPAIGN_IDS.has(campaignId) && store !== memoryStore) {
+      return memoryStore.insights(campaignId);
+    }
+    return rows;
   },
   async insertAnomalies(rows) {
     return (await getAnalyticsStore()).insertAnomalies(rows);
