@@ -190,7 +190,7 @@ export function CheckoutButton({
       setError("Something went wrong. Please try again.");
       setLoading(false);
     }
-  }, [sku, landingPageId, campaignId, amountPaise, destinationSlug]);
+  }, [sku, landingPageId, campaignId, amountPaise, productTitle, destinationSlug]);
 
   return (
     <div className="flex w-full flex-col items-stretch gap-3">
