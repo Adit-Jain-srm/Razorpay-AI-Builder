@@ -1,6 +1,6 @@
 # Submission Draft — Razorpay AI Buildathon Track 01
 
-Pre-filled for the application form. Video URL added after recording.
+Pre-filled for the application form.
 
 ---
 
@@ -41,7 +41,7 @@ https://github.com/Adit-Jain-srm/Razorpay-AI-Builder
 
 ## 5-minute pitch video (unlisted)
 
-_URL to be added after recording._
+https://youtu.be/AK79pahIP6U
 
 ---
 
