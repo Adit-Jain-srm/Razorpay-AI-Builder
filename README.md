@@ -5,6 +5,7 @@
 > An AI agent that researches Indian buyers, deploys campaigns, collects ₹ through Razorpay test-mode Checkout, and optimizes with a policy-gated audit trail on every money action.
 
 [![Live Demo](https://img.shields.io/badge/Live-mediaos--kappa.vercel.app-10b981?style=for-the-badge)](https://mediaos-kappa.vercel.app)
+[![Demo Video](https://img.shields.io/badge/Video-5%20min%20pitch-ef4444?style=for-the-badge)](https://youtu.be/AK79pahIP6U)
 [![Catalog API](https://img.shields.io/badge/Catalog-/api/commerce/catalog-3b82f6?style=for-the-badge)](https://mediaos-kappa.vercel.app/api/commerce/catalog)
 [![Tests](https://img.shields.io/badge/Tests-507%20passing-22c55e?style=for-the-badge)](#testing)
 [![Track 01](https://img.shields.io/badge/Track-01%20AI%20Growth-f59e0b?style=for-the-badge)](https://razorpay.com/buildathon/)
