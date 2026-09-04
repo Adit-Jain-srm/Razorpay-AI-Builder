@@ -91,40 +91,46 @@ Now it's building the landing page... deploying it... and setting up the Razorpa
 
 ---
 
-### 5 — Quick tour: Research, Campaigns, Creatives (2:40-3:20)
+### 5 — Quick tour: Research, Campaigns, Creatives + Image Gen (2:40-3:30)
 
-**Screen:** Click through `/research` → `/campaigns` → `/creatives` quickly.
+**Screen:** Click through `/research` → `/campaigns` → `/creatives`. On creatives, click "Generate Image" on one variant.
 
 **Say:**
 "Let me quickly show you the modules the agent just used.
 
-Research — here are the personas it generated. Real pain points in the audience's own words. Competitor ad angles. And everything is cited — you can see the source URLs. It doesn't hallucinate research, it aggregates from live data.
+Research — here are the personas it synthesized. Real pain points in the audience's own words. Competitor ad angles. Everything is cited with source URLs — the engine runs six Bright Data providers in parallel through an OpenBB-inspired TET abstraction. It doesn't hallucinate research.
 
-Campaigns — here's the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR.
+Campaigns — here's the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR. The schema is Zod-validated end to end — same validation the Operator uses.
 
-Creatives — platform-ready ad variants. Each one is classified by psychological hook — fear, curiosity, FOMO, social proof, urgency, exclusivity — and scored 0 to 100 for direct-response quality. If one scores low, you regenerate it."
+Creatives — platform-ready ad variants for Meta, Google, TikTok. Each one is classified by psychological hook — fear, curiosity, FOMO, social proof, urgency, exclusivity — and scored 0 to 100. If one scores low, regenerate it.
+
+And watch this — I can generate ad visuals right here. This hits Azure AI Foundry's MAI-Image-2.5 model."
+
+*(Click "Generate Image" on a creative variant. Wait for the image to appear.)*
+
+"That's a production-ready ad image generated from the creative's headline. The whole stack is Next.js 16, React 19, TypeScript strict, Vercel AI SDK v7 for the agent loop, Azure AI Foundry for chat and image generation, Supabase for persistence with RLS, and Razorpay test-mode for payments."
 
 ---
 
-### 6 — Landing pages and the editor (3:20-3:50)
+### 6 — Landing pages and the editor (3:30-4:00)
 
 **Screen:** Navigate to `/landing-pages`. Click into a page.
 
 **Say:**
-"Landing pages. Three seeded pages here — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants that split traffic 50/50.
+"Landing pages. Three seeded pages — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants splitting traffic 50/50.
 
-The editor has 14 section types — hero, social proof, testimonials, FAQ, countdown timer, quiz funnel, lead form, exit intent popup, and the checkout section with Razorpay. Five templates to start from. Every generated page gets a checkout section by default now — the SKU and price come from the product catalog, not hardcoded."
+The editor has 14 section types. Five templates — squeeze, long-form sales, quiz funnel, advertorial, listicle. Every generated page gets a checkout section by default — SKU and price resolved from the catalog at render time, not hardcoded. The whole renderer is server-rendered React 19 with CSS variable theming."
 
 ---
 
-### 7 — Live payment (3:50-4:30)
+### 7 — Live payment (4:00-4:40)
 
 **Screen:** Open `/lp/aarogya-fit` (the deployed page).
 
 **Say:**
 "Okay, here's the actual page a buyer sees. Hero, features, social proof... and here's the checkout section.
 
-Notice the order summary — product name, price, Pay button, and trust signals. The price is resolved server-side from the product catalog. The client never sends an amount — that's a security decision. Server-priced SKUs.
+Notice the order summary — product name, price, Pay button, and trust signals. The price is resolved server-side from the product catalog. The client never sends an amount — server-priced SKUs, integer paise only, never floats.
 
 Let me pay."
 
@@ -134,11 +140,11 @@ Let me pay."
 
 *(Payment completes. Redirected to thanks page.)*
 
-"And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. This is pulled from the server-side order store, not just query parameters. There's even a receipt email simulation down here. Real payment loop."
+"And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. This is pulled from the server-side order store — dual-indexed by our UUID and Razorpay's order ID for O(1) lookup. There's even a receipt email simulation. Real payment loop, not a mock."
 
 ---
 
-### 8 — Failure and the stop-rule (4:30-5:00)
+### 8 — Failure and the stop-rule (4:40-5:10)
 
 **Screen:** Go back to `/lp/aarogya-fit`. Click Pay again.
 
@@ -147,24 +153,24 @@ Let me pay."
 
 *(Enter failure@razorpay or select Failure in mock bank. Payment fails. Redirected to failed page.)*
 
-"So look at this. It doesn't just say 'try again.' There's a stop-rule — 'This order will not be retried. The policy engine prevents automatic retries after a failed payment.' And this card at the bottom — 'Every money action is auditable, this failure has been logged.'
+"So look at this. It doesn't just say 'try again.' There's a stop-rule — 'This order will not be retried. The policy engine prevents automatic retries after a failed payment.' And this card — every money action is auditable, this failure has been logged.
 
-If you want to buy again, it's a new order with a new mandate. The failed one stays failed. That's the Track 01 bar — one failure handled gracefully."
+If you want to buy again, it's a new order with a new mandate. The failed one stays failed. That's one failure handled gracefully."
 
 ---
 
-### 9 — The catalog API (5:00-5:20)
+### 9 — The catalog API (5:10-5:30)
 
 **Screen:** Open `mediaos-kappa.vercel.app/api/commerce/catalog` in a new tab.
 
 **Say:**
 "This is the other side of Track 01 — making the merchant transactable by AI buyers.
 
-This is the product catalog API, inspired by OpenAI's Agentic Commerce Protocol. Three products, prices in integer paise, availability, upsell and cross-sell graphs, and checkout endpoints. An AI agent can hit this, discover products, check eligibility, and create a checkout session programmatically. The merchant is sellable to both humans and AI."
+ACP-inspired product catalog. Three products, prices in integer paise, availability, upsell and cross-sell graphs, and checkout endpoints. An AI agent can hit this JSON feed, discover products, check eligibility, and create a checkout session through the REST API. The merchant is sellable to both humans and machines."
 
 ---
 
-### 10 — Growth scorecard and budget reallocation (5:20-5:50)
+### 10 — Growth scorecard and budget reallocation (5:30-6:00)
 
 **Screen:** Back to `/operator`.
 
@@ -184,7 +190,7 @@ So I'll tell it to reallocate."
 
 ---
 
-### 11 — Audit trail (5:50-6:10)
+### 11 — Audit trail (6:00-6:20)
 
 **Screen:** Still in the Operator.
 
@@ -197,7 +203,7 @@ See this denied one? Reason was too short — policy rejected it. And here's the
 
 ---
 
-### 12 — Analytics (6:10-6:35)
+### 12 — Analytics (6:20-6:45)
 
 **Screen:** Navigate to `/analytics` → click into the campaign.
 
@@ -208,7 +214,7 @@ The funnel goes from impressions all the way down to Razorpay-paid orders. Platf
 
 ---
 
-### 13 — Close on the repo (6:35-7:00)
+### 13 — Close on the repo (6:45-7:15)
 
 **Screen:** Open `github.com/Adit-Jain-srm/Razorpay-AI-Builder`. Scroll the README.
 
@@ -241,21 +247,21 @@ One prompt. Watch what happens.
 
 It's researching the audience first — six Bright Data providers running in parallel. Search intent, Reddit, competitor ads, news... okay, now it's creating the campaign from that research. INR budget. Sales objective. Now creatives — these are Meta ad variants, each one gets a hook classification and a score. Now it's building the landing page... deploying it... and setting up the Razorpay checkout session. There's the payment link.
 
-Let me quickly show you the modules the agent just used. Research — here are the personas it generated. Real pain points in the audience's own words. Competitor ad angles. And everything is cited — it doesn't hallucinate research, it aggregates from live data. Campaigns — the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR. Creatives — platform-ready ad variants. Each one classified by psychological hook and scored 0 to 100. If one scores low, you regenerate it.
+Let me quickly show you the modules the agent just used. Research — here are the personas it synthesized. Real pain points in the audience's own words. Competitor ad angles. Everything is cited with source URLs — the engine runs six Bright Data providers in parallel through an OpenBB-inspired TET abstraction. It doesn't hallucinate research. Campaigns — the hub. Brief, value props, audience personas, platform recommendations, budget split. All in INR. The schema is Zod-validated end to end. Creatives — platform-ready ad variants for Meta, Google, TikTok. Each one classified by psychological hook and scored 0 to 100. If one scores low, regenerate it. And I can generate ad visuals right here — this hits Azure AI Foundry's MAI-Image-2.5 model. The whole stack is Next.js 16, React 19, TypeScript strict, Vercel AI SDK v7 for the agent loop, Azure AI Foundry for chat and image generation, Supabase for persistence with RLS, and Razorpay test-mode for payments.
 
-Landing pages. Three seeded pages here — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants that split traffic 50/50. The editor has 14 section types. Five templates. Every generated page gets a checkout section by default — the SKU and price come from the product catalog, not hardcoded.
+Landing pages. Three seeded pages — AarogyaFit with Razorpay Checkout, and two retirement income A/B variants splitting traffic 50/50. The editor has 14 section types. Five templates. Every generated page gets a checkout section by default — SKU and price resolved from the catalog at render time, not hardcoded. The whole renderer is server-rendered React 19 with CSS variable theming.
 
-Okay, here's the actual page a buyer sees. Hero, features, social proof... and here's the checkout section. Notice the order summary — product name, price, Pay button, trust signals. The price is resolved server-side. The client never sends an amount — server-priced SKUs. Let me pay.
+Okay, here's the actual page a buyer sees. Hero, features, social proof... and here's the checkout section. Notice the order summary — product name, price, Pay button, trust signals. The price is resolved server-side. The client never sends an amount — server-priced SKUs, integer paise only, never floats. Let me pay.
 
 Test card, any expiry, any CVV...
 
-And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. Pulled from the server-side order store, not just query parameters. Receipt email simulation. Real payment loop.
+And here's the receipt. Product, order ID, Razorpay order ID, payment ID, amount, status — Captured. Pulled from the server-side order store — dual-indexed by our UUID and Razorpay's order ID for O(1) lookup. Receipt email simulation. Real payment loop, not a mock.
 
 Now let me show you what happens when payment fails. I'll use the test UPI — failure@razorpay.
 
 So look at this. It doesn't just say "try again." There's a stop-rule — this order will not be retried. The policy engine prevents automatic retries after a failed payment. And this card — every money action is auditable, this failure has been logged. If you want to buy again, it's a new order with a new mandate. The failed one stays failed. That's one failure handled gracefully.
 
-This is the product catalog API, inspired by OpenAI's Agentic Commerce Protocol. Three products, prices in integer paise, availability, upsell and cross-sell graphs, checkout endpoints. An AI agent can hit this, discover products, and create a checkout session programmatically. The merchant is sellable to both humans and AI.
+ACP-inspired product catalog. Three products, prices in integer paise, availability, upsell and cross-sell graphs, checkout endpoints. An AI agent can hit this JSON feed, discover products, and create a checkout session through the REST API. The merchant is sellable to both humans and machines.
 
 The agent doesn't just launch — it optimizes. Growth scorecard — CTR, CVR, CPA, GMV per audience. B is the winner, lowest CPA. C is burning budget. So I'll tell it to reallocate. It checks policy — is the currency INR? Reason long enough? Mandate required? All pass. Budget shifted. Audit event written. The LLM proposed it, but the deterministic policy engine decided. AI does research and copy. Policy does money.
 
